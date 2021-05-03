@@ -1,2 +1,4 @@
-# frontent
-Web-app based client
+# Gachon CRS
+
+ - Gachon Classroom Reservation Service
+
