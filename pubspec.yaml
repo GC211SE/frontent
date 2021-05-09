@@ -9,14 +9,17 @@ environment:
   sdk: ">=2.7.0 <3.0.0"
 
 dependencies:
+  
   flutter:
     sdk: flutter
-
+  floating_search_bar: ^0.3.0    
   cupertino_icons: ^1.0.2
+  flutter_search_bar: ^2.1.0
+  adobe_xd: ^2.0.0+1
 
 dev_dependencies:
   flutter_test:
-    sdk: flutter
+    sdk: flutter    
 
 flutter:
 
