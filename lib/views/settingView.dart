@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:gcrs/Widget/timetable.dart';
 import 'package:gcrs/utils/GlobalVariables.dart';
 
 class SettingView extends StatefulWidget {
@@ -14,44 +13,33 @@ class _SettingViewState extends State<SettingView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-/*
       body: MediaQuery.of(context).size.width > GlobalVariables.mobileWidth
           ?
-          // Desktop(Web) UI
-          Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text("SettingView - Desktop"),
-                  ],
-                ),
-              ],
-            )
+      // Desktop(Web) UI
+      Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text("HomeView - Desktop"),
+            ],
+          ),
+        ],
+      )
           :
-          // Mobile(App) UI
-          // Implement design code here
-          Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text("SettingView - Mobile"),
-                  ],
-                ),
-              ],
-            ),
-*/
-      body: WeeklyTimeTable(
-//        cellColor: Color.fromRGBO(0, 184, 255, 1.0),
-//        cellSelectedColor: Color.fromRGBO(189, 0, 255, 1.0),
-//        boarderColor: Color.fromRGBO(0,30,255, 1.0),
-        locale: 'ko',
-        onValueChanged: (Map<int, List<int>>selected) {
-          print(selected);
-        },
+      // Mobile(App) UI
+      // Implement design code here
+      Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text("HomeView - Mobile"),
+            ],
+          ),
+        ],
       ),
       // This will be removed (TEST)
       floatingActionButton: FloatingActionButton(

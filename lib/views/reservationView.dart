@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gcrs/Widget/timetable.dart';
 import 'package:gcrs/utils/GlobalVariables.dart';
 
 class ReservationView extends StatefulWidget {
@@ -10,6 +11,7 @@ class _ReservationViewState extends State<ReservationView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      /*
       body: MediaQuery.of(context).size.width > GlobalVariables.mobileWidth
           ?
           // Desktop(Web) UI
@@ -19,7 +21,7 @@ class _ReservationViewState extends State<ReservationView> {
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text("ReservationView - Desktop"),
+                    Text("SettingView - Desktop"),
                   ],
                 ),
               ],
@@ -33,11 +35,22 @@ class _ReservationViewState extends State<ReservationView> {
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text("ReservationView - Mobile"),
+                    Text("SettingView - Mobile"),
                   ],
                 ),
               ],
             ),
+*/
+      body: WeeklyTimeTable(
+//        cellColor: Color.fromRGBO(0, 184, 255, 1.0),
+//        cellSelectedColor: Color.fromRGBO(189, 0, 255, 1.0),
+//        boarderColor: Color.fromRGBO(0,30,255, 1.0),
+
+        locale: 'ko',
+        onValueChanged: (Map<int, List<int>>selected) {
+          print(selected);
+        },
+      ),
 
       // This will be removed (TEST)
       floatingActionButton: FloatingActionButton(
