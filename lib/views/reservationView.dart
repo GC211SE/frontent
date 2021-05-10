@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:gcrs/Widget/dateDrawer.dart';
 import 'package:gcrs/Widget/timetable.dart';
 import 'package:gcrs/utils/GlobalVariables.dart';
 
@@ -11,6 +12,10 @@ class _ReservationViewState extends State<ReservationView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      drawer: DateDrawer(),
+      appBar: AppBar(
+        title: Text('Side menu'),
+      ),
       /*
       body: MediaQuery.of(context).size.width > GlobalVariables.mobileWidth
           ?
@@ -21,7 +26,7 @@ class _ReservationViewState extends State<ReservationView> {
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text("SettingView - Desktop"),
+                    Text(" - Desktop"),
                   ],
                 ),
               ],
@@ -35,7 +40,7 @@ class _ReservationViewState extends State<ReservationView> {
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text("SettingView - Mobile"),
+                    Text(" - Mobile"),
                   ],
                 ),
               ],

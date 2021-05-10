@@ -22,7 +22,7 @@ class _SettingViewState extends State<SettingView> {
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text("HomeView - Desktop"),
+              Text("SettingView - Desktop"),
             ],
           ),
         ],
@@ -36,7 +36,7 @@ class _SettingViewState extends State<SettingView> {
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text("HomeView - Mobile"),
+              Text("SettingView - Mobile"),
             ],
           ),
         ],
