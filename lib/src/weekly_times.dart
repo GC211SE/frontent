@@ -1,3 +1,4 @@
+/* class control timetable strings */
 class WeeklyTimes {
   static final supportedLocales = const ['ko', 'en'];
 
@@ -6,9 +7,11 @@ class WeeklyTimes {
     "en": <String>['', 'SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'],
   };
 
+  // 오전 9시부터로 수정함
   static final times = {
     "ko": <String>[
       '',
+      /*
       '오전 1시',
       '오전 2시',
       '오전 3시',
@@ -17,6 +20,7 @@ class WeeklyTimes {
       '오전 6시',
       '오전 7시',
       '오전 8시',
+       */
       '오전 9시',
       '오전 10시',
       '오전 11시',
@@ -35,6 +39,7 @@ class WeeklyTimes {
     ],
     "de": <String>[
       '',
+      /*
       '01:00',
       '02:00',
       '03:00',
@@ -44,6 +49,7 @@ class WeeklyTimes {
       '07:00',
       '08:00',
       '09:00',
+      */
       '10:00',
       '11:00',
       '12:00',

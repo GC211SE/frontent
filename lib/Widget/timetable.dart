@@ -5,18 +5,25 @@ import 'package:gcrs/src/indicator.dart';
 import 'package:gcrs/src/weekly_times.dart';
 
 class WeeklyTimeTable extends StatefulWidget {
-  final ValueChanged<Map<int, List<int>>> onValueChanged;
+  /* variables */
+  // color
   final Color cellColor;
   final Color cellSelectedColor;
   final Color boarderColor;
+
+  final ValueChanged<Map<int, List<int>>> onValueChanged;
   final Map<int, List<int>> initialSchedule;
   final bool draggable;
+  // use language
   final String locale;
 
   WeeklyTimeTable({
+    /* set color */
     this.cellColor = Colors.white,
     this.cellSelectedColor = Colors.black,
     this.boarderColor = Colors.grey,
+
+    // 요일별 상수(?) 저장?
     this.initialSchedule = const {
       0: [],
       1: [],
@@ -26,6 +33,7 @@ class WeeklyTimeTable extends StatefulWidget {
       5: [],
       6: [],
     },
+
     this.draggable = false,
     this.locale = "en",
     this.onValueChanged,
@@ -52,6 +60,7 @@ class _WeeklyTimeTableState extends State<WeeklyTimeTable> {
     super.initState();
   }
 
+  /* render timetable */
   @override
   Widget build(BuildContext context) {
     return Column(

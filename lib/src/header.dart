@@ -1,3 +1,4 @@
+/* 상단 요일 바 of timetable */
 import 'package:flutter/material.dart';
 
 class Header extends StatelessWidget {
@@ -5,6 +6,7 @@ class Header extends StatelessWidget {
 
   final List<String> dates;
 
+  // 상단 요일 바
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -12,6 +14,7 @@ class Header extends StatelessWidget {
       child: Card(
         margin: EdgeInsets.fromLTRB(0, 0, 0, 2.0),
         child: Row(
+
             children: dates
                 .map((day) => Expanded(child: Center(child: Text(day))))
                 .toList()),

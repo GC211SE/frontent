@@ -14,49 +14,30 @@ class _ReservationViewState extends State<ReservationView> {
     return Scaffold(
       drawer: DateDrawer(),
       appBar: AppBar(
-        title: Text('Side menu'),
+        title: Text(''),
       ),
-      /*
-      body: MediaQuery.of(context).size.width > GlobalVariables.mobileWidth
-          ?
-          // Desktop(Web) UI
-          Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(" - Desktop"),
-                  ],
-                ),
-              ],
-            )
-          :
-          // Mobile(App) UI
-          // Implement design code here
-          Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(" - Mobile"),
-                  ],
-                ),
-              ],
-            ),
-*/
       body: WeeklyTimeTable(
 //        cellColor: Color.fromRGBO(0, 184, 255, 1.0),
 //        cellSelectedColor: Color.fromRGBO(189, 0, 255, 1.0),
 //        boarderColor: Color.fromRGBO(0,30,255, 1.0),
-
         locale: 'ko',
         onValueChanged: (Map<int, List<int>>selected) {
           print(selected);
         },
       ),
-
+      bottomNavigationBar: BottomNavigationBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem( // select about
+            icon: Icon(Icons.calendar_today_outlined),
+            label: 'Calendar',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.school),
+            label: 'Classroom',
+          ),
+        ],
+        // selectedItemColor: Colors.amber[800],
+      ),
       // This will be removed (TEST)
       floatingActionButton: FloatingActionButton(
         child: Text(
