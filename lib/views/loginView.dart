@@ -20,16 +20,6 @@ class _LoginViewState extends State<LoginView> {
   TextEditingController idControl = TextEditingController();
   TextEditingController pwControl = TextEditingController();
 
-  /*void validateAndSave() {
-    final form = formKey.currentState;
-    if (form.validate()) {
-      form.save();
-      print('Form is valid ID: $_id, password: $_password');
-    } else {
-      print('Form is invalid ID: $_id, password: $_password');
-    }
-  }*/
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -46,17 +36,11 @@ class _LoginViewState extends State<LoginView> {
               new TextFormField(
                 controller: idControl,
                 decoration: new InputDecoration(labelText: 'ID'),
-                validator: (value) =>
-                    value.isEmpty ? 'ID can\'t be empty' : null,
-                onSaved: (value) => userId = value,
               ),
               new TextFormField(
                 controller: pwControl,
                 obscureText: true,
                 decoration: new InputDecoration(labelText: 'Password'),
-                validator: (value) =>
-                    value.isEmpty ? 'Password can\'t be empty' : null,
-                onSaved: (value) => userPw = value,
               ),
               new RaisedButton(
                   child: new Text(
@@ -67,7 +51,7 @@ class _LoginViewState extends State<LoginView> {
                     userId = idControl.text;
                     userPw = pwControl.text;
                     http.Response res = await http.get(Uri.parse(
-                        "https://gcse.doky.space/sign?id=$userId&pw=$userPw "));
+                        "https://gcse.doky.space/api/sign?id=$userId&pw=$userPw "));
                     var resJ = jsonDecode(res.body);
 
                     if (resJ["success"] == true) {
@@ -80,7 +64,33 @@ class _LoginViewState extends State<LoginView> {
                         MaterialPageRoute(builder: (context) => HomeView()),
                       );
                     } else {
-                      print("fail");
+                      await showDialog(
+                        context: context,
+                        builder: (context) => AlertDialog(
+                          title: Column(
+                            children: <Widget>[
+                              new Text("로그인 실패"),
+                            ],
+                          ),
+                          content: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Text(
+                                "아이디 또는 패스워드가 틀립니다.",
+                              ),
+                            ],
+                          ),
+                          actions: <Widget>[
+                            new FlatButton(
+                              child: new Text("OK"),
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                            ),
+                          ],
+                        ),
+                      );
                     }
                   }),
             ],
