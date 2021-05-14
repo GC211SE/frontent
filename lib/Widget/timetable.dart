@@ -5,13 +5,13 @@ import 'package:gcrs/src/indicator.dart';
 import 'package:gcrs/src/weekly_times.dart';
 
 class WeeklyTimeTable extends StatefulWidget {
-  /* variables */
+  /*** variables ***/
   // color
   final Color cellColor;
   final Color cellSelectedColor;
   final Color boarderColor;
 
-  final ValueChanged<Map<int, List<int>>> onValueChanged;
+  // final ValueChanged<Map<int, List<int>>> onValueChanged;
   final Map<int, List<int>> initialSchedule;
   final bool draggable;
   // use language
@@ -23,7 +23,7 @@ class WeeklyTimeTable extends StatefulWidget {
     this.cellSelectedColor = Colors.black,
     this.boarderColor = Colors.grey,
 
-    // 요일별 상수(?) 저장?
+    // ??
     this.initialSchedule = const {
       0: [],
       1: [],
@@ -36,7 +36,7 @@ class WeeklyTimeTable extends StatefulWidget {
 
     this.draggable = false,
     this.locale = "en",
-    this.onValueChanged,
+    // this.onValueChanged,
   });
 
   @override
@@ -66,6 +66,7 @@ class _WeeklyTimeTableState extends State<WeeklyTimeTable> {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
+        /* day bar (top) */
         Header(WeeklyTimes.dates[this.locale]),
         Expanded(
           child: ListView.builder(
@@ -74,16 +75,17 @@ class _WeeklyTimeTableState extends State<WeeklyTimeTable> {
             scrollDirection: Axis.vertical,
             itemBuilder: (BuildContext context, int index) {
               List<Widget> children = [];
+              /* time bar (left) */
               children.add(Indicator(WeeklyTimes.times[this.locale][index]));
               children.addAll(
                 List.generate(
+
                   WeeklyTimes.dates[this.locale].length - 1,
-                      (i) =>
-                      Cell(
+                      (i) => Cell(
                         day: i,
                         timeRange: index,
                         isSelected: selected[i].contains(index),
-                        onCellTapped: onCellTapped,
+                        // onCellTapped: onCellTapped,
                         cellColor: widget.cellColor,
                         cellSelectedColor: widget.cellSelectedColor,
                         boarderColor: widget.boarderColor,
@@ -98,6 +100,7 @@ class _WeeklyTimeTableState extends State<WeeklyTimeTable> {
     );
   }
 
+  /*
   onCellTapped(int day, int timeRange, bool nextSelectedState) {
     setState(() {
       if (!nextSelectedState) {
@@ -108,4 +111,5 @@ class _WeeklyTimeTableState extends State<WeeklyTimeTable> {
     });
     widget.onValueChanged(selected);
   }
+  */
 }
