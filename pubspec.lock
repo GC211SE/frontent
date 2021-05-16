@@ -62,30 +62,11 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  flutter_date_pickers:
-    dependency: "direct main"
-    description:
-      name: flutter_date_pickers
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.2.4"
-  flutter_localizations:
-    dependency: transitive
-    description: flutter
-    source: sdk
-    version: "0.0.0"
   flutter_test:
     dependency: "direct dev"
     description: flutter
     source: sdk
     version: "0.0.0"
-  intl:
-    dependency: transitive
-    description:
-      name: intl
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "0.17.0"
   matcher:
     dependency: transitive
     description:
