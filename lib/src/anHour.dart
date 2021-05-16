@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 class Cell extends StatefulWidget {
   final int day;
   final int timeRange;
-  final bool isSelected;
-  final Function(int, int, bool) onCellTapped;
+  // final bool isSelected;
+  // final Function(int, int, bool) onCellTapped;
   final Color cellColor;
   final Color cellSelectedColor;
   final Color boarderColor;
@@ -12,8 +12,8 @@ class Cell extends StatefulWidget {
   Cell({
     @required this.day,
     @required this.timeRange,
-    @required this.isSelected,
-    @required this.onCellTapped,
+    // @required this.isSelected,
+    // @required this.onCellTapped,
     this.cellColor = Colors.white,
     this.cellSelectedColor = Colors.black,
     this.boarderColor = Colors.grey,
@@ -38,13 +38,12 @@ class _CellState extends State<Cell> {
       key: key,
       child: Center(
         child: GestureDetector(
-          onTap: () {
-            widget.onCellTapped(
-                widget.day, widget.timeRange, widget.isSelected);
-          },
+          //onTap: () {
+          //  widget.onCellTapped(widget.day, widget.timeRange, widget.isSelected);},
           child: AnimatedContainer(
             decoration: BoxDecoration(
-              color: currentColor,
+              // color: currentColor,
+              color: widget.cellColor,
               border: Border(
                 top: BorderSide(width: 1.0, color: widget.boarderColor),
                 left: BorderSide(width: 0.0, color: widget.boarderColor),
@@ -60,7 +59,7 @@ class _CellState extends State<Cell> {
     );
   }
 
-  get currentColor {
+  /*get currentColor {
     return widget.isSelected ? widget.cellSelectedColor : widget.cellColor;
-  }
+  }*/
 }

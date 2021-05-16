@@ -40,14 +40,16 @@ class WeeklyTimeTable extends StatefulWidget {
   });
 
   @override
-  _WeeklyTimeTableState createState() => _WeeklyTimeTableState(this.initialSchedule);
+  // _WeeklyTimeTableState createState() => _WeeklyTimeTableState(this.initialSchedule);
+  _WeeklyTimeTableState createState() => _WeeklyTimeTableState();
 }
 
 class _WeeklyTimeTableState extends State<WeeklyTimeTable> {
   String locale = 'en';
-  Map<int, List<int>> selected;
+  // Map<int, List<int>> selected;
 
-  _WeeklyTimeTableState(this.selected);
+  // _WeeklyTimeTableState(this.selected);
+  _WeeklyTimeTableState();
 
   @override
   void initState() {
@@ -84,7 +86,7 @@ class _WeeklyTimeTableState extends State<WeeklyTimeTable> {
                       (i) => Cell(
                         day: i,
                         timeRange: index,
-                        isSelected: selected[i].contains(index),
+                        // isSelected: selected[i].contains(index),
                         // onCellTapped: onCellTapped,
                         cellColor: widget.cellColor,
                         cellSelectedColor: widget.cellSelectedColor,
