@@ -6,39 +6,9 @@ import 'package:gcrs/src/header.dart';
 import 'package:gcrs/src/indicator.dart';
 import 'package:gcrs/src/weekly_times.dart';
 import 'package:http/http.dart' as http;
+import 'package:gcrs/views/reservationView.dart';
 
-// https://gcse.doky.space/api/schedule?bd=IT대학&crn=304
-// TODO: make class to save lecture
-class Lecture {
-  String date; // 요일
-  String time; // 시간 -> 밑에 MAP으로 시간 알아봅시다
 
-  // format = name:[start time, end time]
-  static final Map<String, List<String>> numberTimes = {
-    '1': ["9:00", "9:50"],
-    '2': ["10:00", "10:50"],
-    '3': ["11:00", "11:50"],
-    '4': ["12:00", "12:50"],
-    '5': ["13:00", "13:50"],
-    '6': ["14:00", "14:50"],
-    '7': ["15:00", "15:50"],
-    '8': ["16:00", "16:50"],
-    '9': ["17:30", "8:20"],
-    '10': ["18:25", "19:15"],
-    '11': ["19:20", "20:10"],
-    '12': ["20:15", "21:05"],
-    '13': ["21:10", "22:00"],
-    '14': ["22:05", "22:55"],
-  };
-  static final Map<String, List<String>> charTimes = {
-    '21': ["9:30", "10:45"],
-    '22': ["11:00", "12:15"],
-    '23': ["13:00", "14:15"],
-    '24': ["14:30", "15:45"],
-    '25': ["16:00", "17:15"],
-    // ??
-  };
-}
 
 class WeeklyTimeTable extends StatefulWidget {
   /*** variables ***/
@@ -47,31 +17,17 @@ class WeeklyTimeTable extends StatefulWidget {
   final Color cellSelectedColor;
   final Color boarderColor;
 
-  // final ValueChanged<Map<int, List<int>>> onValueChanged;
-  // final Map<int, List<int>> initialSchedule;
   final bool draggable;
   // use language
   final String locale;
 
-  List<Lecture> lec; // TODO: 강의 받아와서 저장
+  List<Lecture> lec = []; // TODO: 강의 받아와서 저장 -> 요일 별 정렬 후 저장해 줍시다
+
   WeeklyTimeTable({
     /* set color */
     this.cellColor = Colors.white,
     this.cellSelectedColor = Colors.black,
     this.boarderColor = Colors.grey,
-
-    // ??
-    /*
-    this.initialSchedule = const {
-      0: [],
-      1: [],
-      2: [],
-      3: [],
-      4: [],
-      5: [],
-      6: [],
-    },*/
-
     this.draggable = false,
     this.locale = "en",
     // this.onValueChanged,
@@ -121,13 +77,12 @@ class _WeeklyTimeTableState extends State<WeeklyTimeTable> {
               children.add(Indicator(WeeklyTimes.times[this.locale][index]));
               children.addAll(
                 List.generate(
-
+                  /// 민약 lecture에 해당 시간 idx가 있을 경우 -------이거 으케함...
+                  /// 2개자른걸 그려준다!
                   WeeklyTimes.dates[this.locale].length - 1,
                       (i) => Cell(
                         day: i,
                         timeRange: index,
-                        // isSelected: selected[i].contains(index),
-                        // onCellTapped: onCellTapped,
                         cellColor: widget.cellColor,
                         cellSelectedColor: widget.cellSelectedColor,
                         boarderColor: widget.boarderColor,
@@ -150,17 +105,4 @@ class _WeeklyTimeTableState extends State<WeeklyTimeTable> {
       // widgets = json.decode(response.body);
     });
   }
-
-  /*
-  onCellTapped(int day, int timeRange, bool nextSelectedState) {
-    setState(() {
-      if (!nextSelectedState) {
-        selected[day].add(timeRange);
-      } else {
-        selected[day].remove(timeRange);
-      }
-    });
-    widget.onValueChanged(selected);
-  }
-  */
 }

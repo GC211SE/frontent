@@ -9,11 +9,14 @@ class Cell extends StatefulWidget {
   final Color cellSelectedColor;
   final Color boarderColor;
 
+  final double height;
+
   Cell({
     @required this.day,
     @required this.timeRange,
     // @required this.isSelected,
     // @required this.onCellTapped,
+    this.height = 60.0,
     this.cellColor = Colors.white,
     this.cellSelectedColor = Colors.black,
     this.boarderColor = Colors.grey,
@@ -36,30 +39,18 @@ class _CellState extends State<Cell> {
   Widget build(BuildContext context) {
     return Expanded(
       key: key,
-      child: Center(
-        child: GestureDetector(
-          //onTap: () {
-          //  widget.onCellTapped(widget.day, widget.timeRange, widget.isSelected);},
-          child: AnimatedContainer(
-            decoration: BoxDecoration(
-              // color: currentColor,
-              color: widget.cellColor,
-              border: Border(
-                top: BorderSide(width: 1.0, color: widget.boarderColor),
-                left: BorderSide(width: 0.0, color: widget.boarderColor),
-                right: BorderSide(width: 0.0, color: widget.boarderColor),
-              ),
-            ),
-            height: 58.0,
-            duration: Duration(milliseconds: 500),
-            curve: Curves.fastOutSlowIn,
+      child: Container(
+        decoration: BoxDecoration(
+          // color: currentColor,
+          color: widget.cellColor,
+          border: Border(
+            top: BorderSide(width: 1.0, color: widget.boarderColor),
+            left: BorderSide(width: 0.0, color: widget.boarderColor),
+            right: BorderSide(width: 0.0, color: widget.boarderColor),
           ),
         ),
+        height: widget.height,
       ),
     );
   }
-
-  /*get currentColor {
-    return widget.isSelected ? widget.cellSelectedColor : widget.cellColor;
-  }*/
 }
