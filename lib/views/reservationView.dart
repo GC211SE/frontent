@@ -4,6 +4,7 @@ import 'package:gcrs/Widget/timetable.dart';
 import 'package:gcrs/utils/GlobalVariables.dart';
 
 var thisContext;
+
 class ReservationView extends StatefulWidget {
   @override
   _ReservationViewState createState() => _ReservationViewState();
@@ -17,9 +18,6 @@ class _ReservationViewState extends State<ReservationView> {
       appBar: AppBar(
         title: Text('예약'),
       ),
-
-
-
       /*
       body: WeeklyTimeTable(
         // setting color of timetable cell
@@ -38,10 +36,8 @@ class _ReservationViewState extends State<ReservationView> {
           child: WeeklyTimeTable(
             locale: 'ko',
           )
-        /*** TODO: add reservation ***/
+        /***  ***/
       ),
-
-
 
 
       floatingActionButton: Stack(
@@ -62,6 +58,7 @@ class _ReservationViewState extends State<ReservationView> {
               ),
             ),),
         ],
+
       ),
     );
   }

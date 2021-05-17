@@ -1,8 +1,44 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:gcrs/src/anHour.dart';
 import 'package:gcrs/src/header.dart';
 import 'package:gcrs/src/indicator.dart';
 import 'package:gcrs/src/weekly_times.dart';
+import 'package:http/http.dart' as http;
+
+// https://gcse.doky.space/api/schedule?bd=IT대학&crn=304
+// TODO: make class to save lecture
+class Lecture {
+  String date; // 요일
+  String time; // 시간 -> 밑에 MAP으로 시간 알아봅시다
+
+  // format = name:[start time, end time]
+  static final Map<String, List<String>> numberTimes = {
+    '1': ["9:00", "9:50"],
+    '2': ["10:00", "10:50"],
+    '3': ["11:00", "11:50"],
+    '4': ["12:00", "12:50"],
+    '5': ["13:00", "13:50"],
+    '6': ["14:00", "14:50"],
+    '7': ["15:00", "15:50"],
+    '8': ["16:00", "16:50"],
+    '9': ["17:30", "8:20"],
+    '10': ["18:25", "19:15"],
+    '11': ["19:20", "20:10"],
+    '12': ["20:15", "21:05"],
+    '13': ["21:10", "22:00"],
+    '14': ["22:05", "22:55"],
+  };
+  static final Map<String, List<String>> charTimes = {
+    '21': ["9:30", "10:45"],
+    '22': ["11:00", "12:15"],
+    '23': ["13:00", "14:15"],
+    '24': ["14:30", "15:45"],
+    '25': ["16:00", "17:15"],
+    // ??
+  };
+}
 
 class WeeklyTimeTable extends StatefulWidget {
   /*** variables ***/
@@ -17,6 +53,7 @@ class WeeklyTimeTable extends StatefulWidget {
   // use language
   final String locale;
 
+  List<Lecture> lec; // TODO: 강의 받아와서 저장
   WeeklyTimeTable({
     /* set color */
     this.cellColor = Colors.white,
@@ -46,6 +83,7 @@ class WeeklyTimeTable extends StatefulWidget {
 }
 
 class _WeeklyTimeTableState extends State<WeeklyTimeTable> {
+  List widgets = [];
   String locale = 'en';
   // Map<int, List<int>> selected;
 
@@ -61,6 +99,7 @@ class _WeeklyTimeTableState extends State<WeeklyTimeTable> {
     }
 
     super.initState();
+    loadData();
   }
 
   /* render timetable */
@@ -101,6 +140,15 @@ class _WeeklyTimeTableState extends State<WeeklyTimeTable> {
         ),
       ],
     );
+  }
+
+  loadData() async {
+    Uri dataURL = Uri.parse("https://gcse.doky.space/api/schedule?bd=IT대학&crn=304");
+    http.Response response = await http.get(dataURL);
+    setState(() {
+      // TODO: change 적용이 이안에 들어가야할 듯?
+      // widgets = json.decode(response.body);
+    });
   }
 
   /*
