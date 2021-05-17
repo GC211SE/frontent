@@ -30,7 +30,6 @@ class WeeklyTimeTable extends StatefulWidget {
     this.boarderColor = Colors.grey,
     this.draggable = false,
     this.locale = "en",
-    // this.onValueChanged,
   });
 
   @override
@@ -41,7 +40,8 @@ class WeeklyTimeTable extends StatefulWidget {
 class _WeeklyTimeTableState extends State<WeeklyTimeTable> {
   List widgets = [];
   String locale = 'en';
-  // Map<int, List<int>> selected;
+  List<Lecture> lec = [];
+
 
   // _WeeklyTimeTableState(this.selected);
   _WeeklyTimeTableState();
@@ -50,6 +50,12 @@ class _WeeklyTimeTableState extends State<WeeklyTimeTable> {
   void initState() {
     if (WeeklyTimes.localContains(widget.locale)) {
       setState(() {
+        /// TEST TODO: remove test
+        lec.add(Lecture(date: "1", time: "1"));
+        lec.add(Lecture(date: "1", time: "2"));
+        lec.add(Lecture(date: "3", time: "21"));
+        lec.add(Lecture(date: "3", time: "22"));
+
         locale = widget.locale;
       });
     }

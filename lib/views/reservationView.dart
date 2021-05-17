@@ -7,8 +7,18 @@ var thisContext;
 // https://gcse.doky.space/api/schedule?bd=IT대학&crn=304
 // TODO: make class to save lecture
 class Lecture {
+
+
   String date; // 요일
   String time; // 시간 -> 밑에 MAP 으로 시간 알아봅시다
+
+  Lecture({
+    this.date,
+    this.time
+  });
+
+  //@override
+  //_CellState createState() => _CellState();
 
   timeCalculator(int time){
     String startTime = convertToActualTime[time][0];

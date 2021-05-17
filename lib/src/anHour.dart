@@ -3,19 +3,16 @@ import 'package:flutter/material.dart';
 class Cell extends StatefulWidget {
   final int day;
   final int timeRange;
-  // final bool isSelected;
-  // final Function(int, int, bool) onCellTapped;
   final Color cellColor;
   final Color cellSelectedColor;
   final Color boarderColor;
 
+  /// 시간에 따라  cell 잘라야함
   final double height;
 
   Cell({
     @required this.day,
     @required this.timeRange,
-    // @required this.isSelected,
-    // @required this.onCellTapped,
     this.height = 60.0,
     this.cellColor = Colors.white,
     this.cellSelectedColor = Colors.black,
