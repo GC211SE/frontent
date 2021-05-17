@@ -18,19 +18,30 @@ class _ReservationViewState extends State<ReservationView> {
         title: Text('예약'),
       ),
 
-      /*** timetable ***/
+
+
+      /*
       body: WeeklyTimeTable(
         // setting color of timetable cell
         // cellColor: Color.fromRGBO(0, 184, 255, 1.0),
         // cellSelectedColor: Color.fromRGBO(189, 0, 255, 1.0),
         // boarderColor: Color.fromRGBO(0,30,255, 1.0),
         locale: 'ko', // language
-        /*
-        onValueChanged: (Map<int, List<int>>selected) {   //TODO function 구현 안됨
-          print(selected);
-        },
-        */
+
+        //onValueChanged: (Map<int, List<int>>selected) {   //TODO function 구현 안됨
+        //  print(selected);
+        //},
+
+      ),*/
+      /*** timetable ***/
+      body: Container(
+          child: WeeklyTimeTable(
+            locale: 'ko',
+          )
+        /*** TODO: add reservation ***/
       ),
+
+
 
 
       floatingActionButton: Stack(

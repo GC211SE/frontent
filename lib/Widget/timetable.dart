@@ -12,7 +12,7 @@ class WeeklyTimeTable extends StatefulWidget {
   final Color boarderColor;
 
   // final ValueChanged<Map<int, List<int>>> onValueChanged;
-  final Map<int, List<int>> initialSchedule;
+  // final Map<int, List<int>> initialSchedule;
   final bool draggable;
   // use language
   final String locale;
@@ -24,6 +24,7 @@ class WeeklyTimeTable extends StatefulWidget {
     this.boarderColor = Colors.grey,
 
     // ??
+    /*
     this.initialSchedule = const {
       0: [],
       1: [],
@@ -32,7 +33,7 @@ class WeeklyTimeTable extends StatefulWidget {
       4: [],
       5: [],
       6: [],
-    },
+    },*/
 
     this.draggable = false,
     this.locale = "en",
