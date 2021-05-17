@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gcrs/Widget/timetable.dart';
 import 'package:gcrs/utils/GlobalVariables.dart';
@@ -101,6 +102,9 @@ class ReservationView extends StatefulWidget {
 }
 
 class _ReservationViewState extends State<ReservationView> {
+  TextEditingController startControl = TextEditingController();
+  TextEditingController endControl = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     thisContext = context;
@@ -111,10 +115,45 @@ class _ReservationViewState extends State<ReservationView> {
 
       /*** timetable ***/
       body: Container(
-          child: WeeklyTimeTable(
-            locale: 'ko',
+          child: Column(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Expanded(child: WeeklyTimeTable(
+                locale: 'ko',
+              ),
+                flex: 2
+              ),
+              Expanded(child: new Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget>[
+                  new TextFormField(
+                    controller: startControl,
+                    obscureText: true,
+                    decoration: new InputDecoration(labelText: 'Start Time'),
+                  ),
+                  new TextFormField(
+                    controller: endControl,
+                    obscureText: true,
+                    decoration: new InputDecoration(labelText: 'End Time'),
+                  ),
+                  new RaisedButton(
+                      child: new Text(
+                        'Reserve',
+                        style: new TextStyle(fontSize: 20.0),
+                      ),
+                      onPressed: () async{
+
+                      }
+                  )
+                ],
+
+              )
+              ),
+              /***  ***/
+            ],
+
           )
-        /***  ***/
       ),
 
 
