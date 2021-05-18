@@ -71,18 +71,19 @@ class _WeeklyTimeTableState extends State<WeeklyTimeTable> {
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         /* day bar (top) */
-        Header(WeeklyTimes.dates[this.locale]),
+        Header(WeeklyTimes.dates[this.locale]), // 일, 월, 화, 수 ... 토
         Expanded(
-          child: ListView.builder(
+          child: ListView.builder( // list view를 요일별로 따로 만들어 줘...?
             itemCount: WeeklyTimes.times[this.locale].length,
             shrinkWrap: true,
-            scrollDirection: Axis.vertical,
+            scrollDirection: Axis.horizontal,
             itemBuilder: (BuildContext context, int index) {
               List<Widget> children = [];
               List<Cell> cells = [];
               /* time bar (left) */
               children.add(Indicator(WeeklyTimes.times[this.locale][index]));
               int hourskip; /// hourskip counter
+              /*
               children.addAll(
                 /// 민약 lecture에 해당 시간 idx가 있을 경우 -------이거 으케함...
                 /// 2개자른걸 그려준다!
@@ -98,6 +99,7 @@ class _WeeklyTimeTableState extends State<WeeklyTimeTable> {
                   ),
                 ),
               );
+              */
               /// add로 다바꾸면 되려나? -> 가로 세로를 바꾸도록하자
               children.add(
                 Cell(
@@ -106,7 +108,7 @@ class _WeeklyTimeTableState extends State<WeeklyTimeTable> {
                   cellColor: widget.cellColor,
                   cellSelectedColor: widget.cellSelectedColor,
                   boarderColor: widget.boarderColor,
-                  isLecture: true,
+                  isLecture: false,
                 )
               );
               for (int count = 0; count < lec.length; count++){
@@ -114,8 +116,8 @@ class _WeeklyTimeTableState extends State<WeeklyTimeTable> {
 
                 }
               }
-
-              return Row(children: children);
+              // return Row(children: children);
+              return Column(children: children);
             },
 
           ),
