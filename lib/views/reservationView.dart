@@ -146,7 +146,9 @@ class _ReservationViewState extends State<ReservationView> {
                                     doneText: "Yes",
                                     cancelText: "Cancel",
                                     interval: 5,
+                                    // 지금 시간에서 1시간 이후부터 예약가능
                                     initialStartTime: DateTime.now().add(Duration(hours: 1)),
+                                    // 끝나는 시각은 2시간 이후
                                     initialEndTime: DateTime.now().add(Duration(hours: 2)),
                                     mode: DateTimeRangePickerMode.dateAndTime,
                                     minimumTime: DateTime.now().subtract(Duration(days: 5)),
@@ -161,25 +163,21 @@ class _ReservationViewState extends State<ReservationView> {
                               },
                           ),
                         ),
-                        Text(
+                        Text( // 시작 시간 표시 (처음 실행때는 현재시각)
                             'Start Time : '+startTime.hour.toString()+":"+startTime.minute.toString(),
                             style: TextStyle(fontSize: 20.0)
                         ),
-                        Text('end Time : '+endTime.hour.toString()+":"+endTime.minute.toString(),
+                        Text( // 종료 시간 표시 (처음 실행때는 현재시각)
+                            'end Time : '+endTime.hour.toString()+":"+endTime.minute.toString(),
                             style: TextStyle(fontSize: 20.0))
                       ],
                     ),
                   ),
 
-                  RaisedButton(
+                  RaisedButton( // 예약
                       child: Text("Reserve",style: new TextStyle(fontSize: 20)),
                       onPressed: (){
-                        if(startTime.toString() == null || endTime.toString() == null){
-
-                        }
-                        else{
                           showAlertDialog(context);
-                        }
                       })
                 ]),
               ),
@@ -218,6 +216,7 @@ class _ReservationViewState extends State<ReservationView> {
     Widget cancelButton = FlatButton(
       child: Text("Cancel"),
       onPressed:  () {
+        // 이전 화면으로
         Navigator.pop(context);
       },
     );
@@ -232,6 +231,7 @@ class _ReservationViewState extends State<ReservationView> {
     // set up the AlertDialog
     AlertDialog alert = AlertDialog(
       title: Text(""),
+      // 강의실 받아온거 추가해야함
       content: Text(startTime.hour.toString()+":"+startTime.minute.toString()+" ~ "+
           endTime.hour.toString()+":"+endTime.minute.toString()+"\nwould you like to continue?", textAlign: TextAlign.center),
       actions: [
