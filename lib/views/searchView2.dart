@@ -6,49 +6,64 @@ import 'package:gcrs/views/searchView.dart';
 import 'package:gcrs/views/reservationView.dart';
 import 'package:get/get.dart';
 
-class SearchView2 extends StatefulWidget {
-  @override
-  _SearchViewState2 createState() => _SearchViewState2();
-}
-
-class _SearchViewState2 extends State<SearchView2> {
+class SearchView2 extends StatelessWidget {
   String building = Get.arguments;
   List data = [];
-  Future<String> getData() async {
+
+  Future<List<String>> getData() async {
     http.Response res = await http.get(Uri.parse(
         "https://gcse.doky.space/api/schedule/classrooms?bd=$building"));
-    this.setState(() {
-      data = jsonDecode(res.body)["result"];
-    });
-
-    return "success";
+    return (jsonDecode(res.body)["result"] as List)
+        .map<String>((e) => e.toString())
+        .toList();
   }
 
-  void _itemtapped() {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => ReservationView()), //route here
+  Future<Map<String, dynamic>> getRoomData(String roomID) async {
+    http.Response res2 = await http.get(Uri.parse(
+        "https://gcse.doky.space/api/reservation/currtotal?bd=$building&crn=$roomID"));
+    return {
+      'reserved': jsonDecode(res2.body)["success"]["reserved"],
+      'using': jsonDecode(res2.body)["success"]["using"],
+    };
+  }
+
+  Widget buildRoomCard(String roomID) {
+    return FutureBuilder<Map<String, dynamic>>(
+      future: getRoomData(roomID),
+      builder: (_, snapshot) {
+        String using = "loading", reserved = "loading";
+        if (snapshot.connectionState == ConnectionState.done) {
+          using = snapshot.data!["using"].toString();
+          reserved = snapshot.data!["reserved"].toString();
+        }
+        return Card(
+            child: ListTile(
+          title: Text('강의실 - $roomID    사용 중 - $using    예약 중 - $reserved'),
+          onTap: () {
+            data = [building, roomID];
+            Get.to(() => ReservationView(), arguments: data);
+          },
+        ));
+      },
     );
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    this.getData();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text('강의실 선택')),
-      body: new ListView.builder(
-        itemCount: data == null ? 0 : data.length,
-        itemBuilder: (BuildContext context, int index) {
-          return new Card(
-            child: ListTile(onTap: _itemtapped, title: Text(data[index])),
-          );
-        },
-      ),
+      body: FutureBuilder<List<String>>(
+          future: getData(),
+          builder: (_, snapshot) {
+            if (snapshot.connectionState != ConnectionState.done ||
+                snapshot.data == null) return Text('Loading');
+            return ListView.builder(
+              itemCount: snapshot.data!.length,
+              itemBuilder: (BuildContext context, int index) {
+                return buildRoomCard(snapshot.data![index]);
+              },
+            );
+          }),
     );
   }
 }
