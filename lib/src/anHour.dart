@@ -9,13 +9,15 @@ class Cell extends StatefulWidget {
 
   /// 시간에 따라  cell 잘라야함
   final double height;
+  final bool isLecture;
 
   Cell({
     @required this.day,
     @required this.timeRange,
+    @required this.isLecture,
     this.height = 60.0,
     this.cellColor = Colors.white,
-    this.cellSelectedColor = Colors.black,
+    this.cellSelectedColor = Colors.blue,
     this.boarderColor = Colors.grey,
   });
 
@@ -39,7 +41,7 @@ class _CellState extends State<Cell> {
       child: Container(
         decoration: BoxDecoration(
           // color: currentColor,
-          color: widget.cellColor,
+          color: widget.isLecture ? widget.cellColor : widget.cellSelectedColor,
           border: Border(
             top: BorderSide(width: 1.0, color: widget.boarderColor),
             left: BorderSide(width: 0.0, color: widget.boarderColor),

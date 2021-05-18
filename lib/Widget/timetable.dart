@@ -26,7 +26,7 @@ class WeeklyTimeTable extends StatefulWidget {
   WeeklyTimeTable({
     /* set color */
     this.cellColor = Colors.white,
-    this.cellSelectedColor = Colors.black,
+    this.cellSelectedColor = Colors.blue,
     this.boarderColor = Colors.grey,
     this.draggable = false,
     this.locale = "en",
@@ -79,24 +79,45 @@ class _WeeklyTimeTableState extends State<WeeklyTimeTable> {
             scrollDirection: Axis.vertical,
             itemBuilder: (BuildContext context, int index) {
               List<Widget> children = [];
+              List<Cell> cells = [];
               /* time bar (left) */
               children.add(Indicator(WeeklyTimes.times[this.locale][index]));
+              int hourskip; /// hourskip counter
               children.addAll(
+                /// 민약 lecture에 해당 시간 idx가 있을 경우 -------이거 으케함...
+                /// 2개자른걸 그려준다!
                 List.generate(
-                  /// 민약 lecture에 해당 시간 idx가 있을 경우 -------이거 으케함...
-                  /// 2개자른걸 그려준다!
                   WeeklyTimes.dates[this.locale].length - 1,
                       (i) => Cell(
-                        day: i,
-                        timeRange: index,
-                        cellColor: widget.cellColor,
-                        cellSelectedColor: widget.cellSelectedColor,
-                        boarderColor: widget.boarderColor,
-                      ),
+                    day: i,
+                    timeRange: index,
+                    cellColor: widget.cellColor,
+                    cellSelectedColor: widget.cellSelectedColor,
+                    boarderColor: widget.boarderColor,
+                        isLecture: false,
+                  ),
                 ),
               );
+              /// add로 다바꾸면 되려나? -> 가로 세로를 바꾸도록하자
+              children.add(
+                Cell(
+                  day: 1,
+                  timeRange: index,
+                  cellColor: widget.cellColor,
+                  cellSelectedColor: widget.cellSelectedColor,
+                  boarderColor: widget.boarderColor,
+                  isLecture: true,
+                )
+              );
+              for (int count = 0; count < lec.length; count++){
+                if(int.parse(lec[count].date) == index){
+
+                }
+              }
+
               return Row(children: children);
             },
+
           ),
         ),
       ],
@@ -108,6 +129,7 @@ class _WeeklyTimeTableState extends State<WeeklyTimeTable> {
     http.Response response = await http.get(dataURL);
     setState(() {
       // TODO: change 적용이 이안에 들어가야할 듯?
+      // TODO: day 순 , time 순, 으로 정렬 필요(이게 맞는듯)
       // widgets = json.decode(response.body);
     });
   }
