@@ -52,9 +52,9 @@ class _WeeklyTimeTableState extends State<WeeklyTimeTable> {
       setState(() {
         /// TEST TODO: remove test
         lec.add(Lecture(date: "1", time: "1"));
-        lec.add(Lecture(date: "1", time: "2"));
+        // lec.add(Lecture(date: "1", time: "2"));
         lec.add(Lecture(date: "3", time: "21"));
-        lec.add(Lecture(date: "3", time: "22"));
+        // lec.add(Lecture(date: "3", time: "22"));
 
         locale = widget.locale;
       });
@@ -87,9 +87,10 @@ class _WeeklyTimeTableState extends State<WeeklyTimeTable> {
               for (int dateIdx = 0; dateIdx < 7; dateIdx++){
                 isLecture = false;
                 for (int lectureIdx = 0; lectureIdx < lec.length; lectureIdx++){
-                  if (dateIdx == int.parse(lec[lectureIdx].date)){
+                  if (dateIdx == int.parse(lec[lectureIdx].date) && index == dateIdx){
                     // TODO: if lecture가 있을때
                     /// timecal.return을 해서 잘 해서 잘 그린다...
+                    isLecture = true;
                     children.add(
                         Column(
                           children: [
