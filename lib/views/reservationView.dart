@@ -1,21 +1,33 @@
+import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gcrs/Widget/timetable.dart';
 import 'package:gcrs/utils/GlobalVariables.dart';
+import 'package:http/http.dart' as http;
 import 'package:f_datetimerangepicker/f_datetimerangepicker.dart';
 
 var thisContext;
-
+int count =0;
 // https://gcse.doky.space/api/schedule?bd=IT대학&crn=304
 // TODO: make class to save lecture
+
 class Lecture {
   String date; // 요일
   String time; // 시간 -> 밑에 MAP 으로 시간 알아봅시다
 
   Lecture({
     this.date,
-    this.time
+    this.time,
   });
+
+  factory Lecture.fromJson(dynamic json){
+    return Lecture(date: json["date"] as String, time: json["time"] as String);
+  }
+
+  @override
+  String toString() {
+    return '{Lecture{date: $date}, Lecture{time: $time}}';
+  }
 
   timeCalculator(int time){
     // split nth 교시 to hour and minute
@@ -103,12 +115,40 @@ class ReservationView extends StatefulWidget {
 }
 
 class _ReservationViewState extends State<ReservationView> {
+
+  var data;
+  List<Lecture> lecture = [];
+  String bd = "IT대학";
+  String crn = "304";
+
+  Future<String> getData() async {
+    http.Response res = await http.get(Uri.parse(
+        "https://gcse.doky.space/api/schedule?bd="+bd+"&crn="+crn));
+    this.setState(() {
+      data = jsonDecode(res.body)["result"];
+      data.forEach((element){
+        count ++;
+        lecture.add(Lecture.fromJson(element));
+      });
+
+    });
+
+    return "success";
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    this.getData();
+  }
+
   DateTime startTime = DateTime.now();
   DateTime endTime = DateTime.now();
   TextEditingController startControl = TextEditingController();
   TextEditingController endControl = TextEditingController();
   @override
   Widget build(BuildContext context) {
+
     thisContext = context;
     return Scaffold(
       appBar: AppBar(
@@ -232,7 +272,7 @@ class _ReservationViewState extends State<ReservationView> {
     AlertDialog alert = AlertDialog(
       title: Text(""),
       // 강의실 받아온거 추가해야함
-      content: Text(startTime.hour.toString()+":"+startTime.minute.toString()+" ~ "+
+      content: Text(count.toString()+"\n"+startTime.hour.toString()+":"+startTime.minute.toString()+" ~ "+
           endTime.hour.toString()+":"+endTime.minute.toString()+"\nwould you like to continue?", textAlign: TextAlign.center),
       actions: [
         cancelButton,
