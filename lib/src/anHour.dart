@@ -14,11 +14,11 @@ class Cell extends StatefulWidget {
   Cell({
     @required this.day,
     @required this.timeRange,
-    @required this.isLecture,
     this.height = 60.0,
     this.cellColor = Colors.white,
-    this.cellSelectedColor = Colors.blue,
+    this.cellSelectedColor = Colors.blueAccent,
     this.boarderColor = Colors.grey,
+    this.isLecture,
   });
 
   @override
@@ -41,13 +41,14 @@ class _CellState extends State<Cell> {
       child: Container(
         decoration: BoxDecoration(
           // color: currentColor,
-          color: widget.isLecture ? widget.cellColor : widget.cellSelectedColor,
+          color: widget.isLecture? widget.cellSelectedColor : widget.cellColor ,
           border: Border(
-            top: BorderSide(width: 1.0, color: widget.boarderColor),
+            right: BorderSide(width: 1.0, color: widget.boarderColor),
             left: BorderSide(width: 0.0, color: widget.boarderColor),
-            right: BorderSide(width: 0.0, color: widget.boarderColor),
+            bottom: BorderSide(width: 0.0, color: widget.boarderColor),
           ),
         ),
+        width: widget.height,
         height: widget.height,
       ),
     );

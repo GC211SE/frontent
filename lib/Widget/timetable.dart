@@ -72,18 +72,28 @@ class _WeeklyTimeTableState extends State<WeeklyTimeTable> {
       children: <Widget>[
         /* day bar (top) */
         Header(WeeklyTimes.dates[this.locale]), // 일, 월, 화, 수 ... 토
+
         Expanded(
           child: ListView.builder( // list view를 요일별로 따로 만들어 줘...?
-            itemCount: WeeklyTimes.times[this.locale].length,
+            // itemCount: WeeklyTimes.times[this.locale].length,
+            itemCount: WeeklyTimes.dates[this.locale].length,
             shrinkWrap: true,
             scrollDirection: Axis.horizontal,
             itemBuilder: (BuildContext context, int index) {
               List<Widget> children = [];
-              List<Cell> cells = [];
-              /* time bar (left) */
-              children.add(Indicator(WeeklyTimes.times[this.locale][index]));
-              int hourskip; /// hourskip counter
-              /*
+              if(index == 0){
+                for (int i = 0; i < WeeklyTimes.times[this.locale].length; i++) {
+                  children.add(
+                      Container(
+                        height: 60.0,
+                        child: Indicator(WeeklyTimes.times[this.locale][i]),
+                      )
+                  );
+                }
+              }
+              else{
+                int hourskip; /// hourskip counter
+                /*
               children.addAll(
                 /// 민약 lecture에 해당 시간 idx가 있을 경우 -------이거 으케함...
                 /// 2개자른걸 그려준다!
@@ -100,20 +110,21 @@ class _WeeklyTimeTableState extends State<WeeklyTimeTable> {
                 ),
               );
               */
-              /// add로 다바꾸면 되려나? -> 가로 세로를 바꾸도록하자
-              children.add(
-                Cell(
-                  day: 1,
-                  timeRange: index,
-                  cellColor: widget.cellColor,
-                  cellSelectedColor: widget.cellSelectedColor,
-                  boarderColor: widget.boarderColor,
-                  isLecture: false,
-                )
-              );
-              for (int count = 0; count < lec.length; count++){
-                if(int.parse(lec[count].date) == index){
+                /// add로 다바꾸면 되려나? -> 가로 세로를 바꾸도록하자
+                children.add(
+                    Cell(
+                      day: 1,
+                      timeRange: index,
+                      cellColor: widget.cellColor,
+                      cellSelectedColor: widget.cellSelectedColor,
+                      boarderColor: widget.boarderColor,
+                      isLecture: false,
+                    )
+                );
+                for (int count = 0; count < lec.length; count++){
+                  if(int.parse(lec[count].date) == index){
 
+                  }
                 }
               }
               // return Row(children: children);
