@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gcrs/Widget/timetable.dart';
 import 'package:gcrs/utils/GlobalVariables.dart';
+import 'package:f_datetimerangepicker/f_datetimerangepicker.dart';
 
 var thisContext;
 
@@ -102,9 +103,10 @@ class ReservationView extends StatefulWidget {
 }
 
 class _ReservationViewState extends State<ReservationView> {
+  DateTime startTime = DateTime.now();
+  DateTime endTime = DateTime.now();
   TextEditingController startControl = TextEditingController();
   TextEditingController endControl = TextEditingController();
-
   @override
   Widget build(BuildContext context) {
     thisContext = context;
@@ -121,34 +123,63 @@ class _ReservationViewState extends State<ReservationView> {
             children: [
               Expanded(child: WeeklyTimeTable(
                 locale: 'ko',
+
               ),
                 flex: 2
               ),
               Expanded(child: new Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: <Widget>[
-                  new TextFormField(
-                    controller: startControl,
-                    obscureText: true,
-                    decoration: new InputDecoration(labelText: 'Start Time'),
+                children: [
+                  Container(
+                    margin: EdgeInsets.only(bottom:40.0, top:10.0),
+                    child:  Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Container(
+                          margin: EdgeInsets.only(bottom: 10.0),
+                          child: RaisedButton(
+                              child: Text("Select Time",style: new TextStyle(fontSize: 20),),
+                              onPressed:(){
+                                DateTimeRangePicker(
+                                    startText: "From",
+                                    endText: "To",
+                                    doneText: "Yes",
+                                    cancelText: "Cancel",
+                                    interval: 5,
+                                    // 지금 시간에서 1시간 이후부터 예약가능
+                                    initialStartTime: DateTime.now().add(Duration(hours: 1)),
+                                    // 끝나는 시각은 2시간 이후
+                                    initialEndTime: DateTime.now().add(Duration(hours: 2)),
+                                    mode: DateTimeRangePickerMode.dateAndTime,
+                                    minimumTime: DateTime.now().subtract(Duration(days: 5)),
+                                    maximumTime: DateTime.now().add(Duration(days: 25)),
+                                    use24hFormat: true,
+                                    onConfirm: (start, end) {
+                                      setState(() {
+                                        startTime = start;
+                                        endTime = end;
+                                      });
+                                    }).showPicker(context);
+                              },
+                          ),
+                        ),
+                        Text( // 시작 시간 표시 (처음 실행때는 현재시각)
+                            'Start Time : '+startTime.hour.toString()+":"+startTime.minute.toString(),
+                            style: TextStyle(fontSize: 20.0)
+                        ),
+                        Text( // 종료 시간 표시 (처음 실행때는 현재시각)
+                            'end Time : '+endTime.hour.toString()+":"+endTime.minute.toString(),
+                            style: TextStyle(fontSize: 20.0))
+                      ],
+                    ),
                   ),
-                  new TextFormField(
-                    controller: endControl,
-                    obscureText: true,
-                    decoration: new InputDecoration(labelText: 'End Time'),
-                  ),
-                  new RaisedButton(
-                      child: new Text(
-                        'Reserve',
-                        style: new TextStyle(fontSize: 20.0),
-                      ),
-                      onPressed: () async{
 
-                      }
-                  )
-                ],
-
-              )
+                  RaisedButton( // 예약
+                      child: Text("Reserve",style: new TextStyle(fontSize: 20)),
+                      onPressed: (){
+                          showAlertDialog(context);
+                      })
+                ]),
               ),
               /***  ***/
             ],
@@ -177,6 +208,44 @@ class _ReservationViewState extends State<ReservationView> {
         ],
 
       ),
+    );
+  }
+  showAlertDialog(BuildContext context) {
+
+    // set up the buttons
+    Widget cancelButton = FlatButton(
+      child: Text("Cancel"),
+      onPressed:  () {
+        // 이전 화면으로
+        Navigator.pop(context);
+      },
+    );
+    Widget continueButton = FlatButton(
+      child: Text("Continue"),
+      onPressed:  () {
+        // 예약
+
+      },
+    );
+
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      title: Text(""),
+      // 강의실 받아온거 추가해야함
+      content: Text(startTime.hour.toString()+":"+startTime.minute.toString()+" ~ "+
+          endTime.hour.toString()+":"+endTime.minute.toString()+"\nwould you like to continue?", textAlign: TextAlign.center),
+      actions: [
+        cancelButton,
+        continueButton,
+      ],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
     );
   }
 }
