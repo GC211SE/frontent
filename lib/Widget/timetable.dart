@@ -74,16 +74,38 @@ class _WeeklyTimeTableState extends State<WeeklyTimeTable> {
         Header(WeeklyTimes.dates[this.locale]), // 일, 월, 화, 수 ... 토
         Expanded(
           child: ListView.builder(
-            itemCount: WeeklyTimes.times[this.locale].length,
             shrinkWrap: true,
             scrollDirection: Axis.vertical,
+            itemCount: WeeklyTimes.times[this.locale].length,
             itemBuilder: (BuildContext context, int index) {
               List<Widget> children = [];
               /* time bar (left) */
-              children.add(Indicator(WeeklyTimes.times[this.locale][index]));
-              for (int dateIdx = 0; dateIdx < 8; dateIdx++){
+              children.add(
+                  Indicator(WeeklyTimes.times[this.locale][index])
+              );
+              bool isLecture;
+              for (int dateIdx = 0; dateIdx < 7; dateIdx++){
+                isLecture = false;
+                for (int lectureIdx = 0; lectureIdx < lec.length; lectureIdx++){
+                  if (dateIdx == int.parse(lec[lectureIdx].date)){
+                    // TODO: if lecture가 있을때
+                    /// timecal.return을 해서 잘 해서 잘 그린다...
+                    children.add(
+                        Column(
+                          children: [
+                            LectureBox(height: 30),
+                            LectureBox(height: 30),
+                          ],
+                        )
+                    );
+                  }
+                }
+                if (isLecture == false){
+                  children.add(
+                      Cell()
+                  );
+                }
               }
-              int pass = 0;
               /*
               for (int lectureIdx = 0; lectureIdx < lec.length; lectureIdx++){
                 if (dateIdx == int.parse(lec[lectureIdx].date)){
