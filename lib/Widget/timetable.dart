@@ -73,110 +73,42 @@ class _WeeklyTimeTableState extends State<WeeklyTimeTable> {
         /* day bar (top) */
         Header(WeeklyTimes.dates[this.locale]), // 일, 월, 화, 수 ... 토
         Expanded(
-          child:
-              ListView.builder(
-                itemCount: WeeklyTimes.dates[this.locale].length,
-                shrinkWrap: true,
-                scrollDirection: Axis.vertical,
-                itemBuilder: (BuildContext context, int index) {
-                  List<Widget> children = [];
-                  if(index == 0){
-                    for (int i = 0; i < WeeklyTimes.times[this.locale].length; i++) {
-                      children.add(
-                          Container(
-                            height: 60.0,
-                            child: Indicator(WeeklyTimes.times[this.locale][i]),
-                          )
-                      );
-                    }
-                  }
-                  return Column(children: children);
-                }
-              ),
-              /*
-              ListView.builder(
-                  itemCount: WeeklyTimes.dates[this.locale].length,
-                  shrinkWrap: true,
-                  scrollDirection: Axis.horizontal,
-                  itemBuilder: (BuildContext context, int index) {
-                    List<Widget> children = [];
-                    if(index == 0){
-                      for (int i = 0; i < WeeklyTimes.times[this.locale].length; i++) {
-                        children.add(
-                            Container(
-                              height: 60.0,
-                              child: Indicator(WeeklyTimes.times[this.locale][i]),
-                            )
-                        );
-                      }
-                    }
-                    return Row(children: children);
-                  }
-              )
-              */
-
-        /*
-        Expanded(
-          child: ListView.builder( // list view를 요일별로 따로 만들어 줘...?
-            // itemCount: WeeklyTimes.times[this.locale].length,
-            itemCount: WeeklyTimes.dates[this.locale].length,
+          child: ListView.builder(
+            itemCount: WeeklyTimes.times[this.locale].length,
             shrinkWrap: true,
-            scrollDirection: Axis.horizontal,
+            scrollDirection: Axis.vertical,
             itemBuilder: (BuildContext context, int index) {
               List<Widget> children = [];
-              if(index == 0){
-                for (int i = 0; i < WeeklyTimes.times[this.locale].length; i++) {
+              /* time bar (left) */
+              children.add(Indicator(WeeklyTimes.times[this.locale][index]));
+              for (int dateIdx = 0; dateIdx < 8; dateIdx++){
+              }
+              int pass = 0;
+              /*
+              for (int lectureIdx = 0; lectureIdx < lec.length; lectureIdx++){
+                if (dateIdx == int.parse(lec[lectureIdx].date)){
                   children.add(
-                      Container(
-                        height: 60.0,
-                        child: Indicator(WeeklyTimes.times[this.locale][i]),
+                      Column(
+                        children: [
+                          LectureBox(height: 30),
+                          LectureBox(height: 30),
+                        ],
                       )
                   );
                 }
-              }
-              else{
-                int hourskip; /// hourskip counter
-                /*
-              children.addAll(
-                /// 민약 lecture에 해당 시간 idx가 있을 경우 -------이거 으케함...
-                /// 2개자른걸 그려준다!
-                List.generate(
-                  WeeklyTimes.dates[this.locale].length - 1,
-                      (i) => Cell(
-                    day: i,
-                    timeRange: index,
-                    cellColor: widget.cellColor,
-                    cellSelectedColor: widget.cellSelectedColor,
-                    boarderColor: widget.boarderColor,
-                        isLecture: false,
-                  ),
-                ),
-              );
-              */
-                /// add로 다바꾸면 되려나? -> 가로 세로를 바꾸도록하자
-                children.add(
-                    Cell(
-                      day: 1,
-                      timeRange: index,
-                      cellColor: widget.cellColor,
-                      cellSelectedColor: widget.cellSelectedColor,
-                      boarderColor: widget.boarderColor,
-                      isLecture: false,
-                    )
-                );
-                for (int count = 0; count < lec.length; count++){
-                  if(int.parse(lec[count].date) == index){
+                if (lectureIdx == index){
 
-                  }
                 }
+                children.add(
+                  Cell(),
+                );
               }
-              // return Row(children: children);
-              return Column(children: children);
+              */
+              return Row(children: children);
             },
-
           ),
-        ),*/
-        )],
+        ),
+      ],
     );
   }
 
@@ -185,7 +117,7 @@ class _WeeklyTimeTableState extends State<WeeklyTimeTable> {
     http.Response response = await http.get(dataURL);
     setState(() {
       // TODO: change 적용이 이안에 들어가야할 듯?
-      // TODO: day 순 , time 순, 으로 정렬 필요(이게 맞는듯)
+      // TODO: day 순 , time 순,(?) 으로 정렬 필요 -> 나중에 정하자...
       // widgets = json.decode(response.body);
     });
   }
