@@ -72,7 +72,50 @@ class _WeeklyTimeTableState extends State<WeeklyTimeTable> {
       children: <Widget>[
         /* day bar (top) */
         Header(WeeklyTimes.dates[this.locale]), // 일, 월, 화, 수 ... 토
+        Expanded(
+          child:
+              ListView.builder(
+                itemCount: WeeklyTimes.dates[this.locale].length,
+                shrinkWrap: true,
+                scrollDirection: Axis.vertical,
+                itemBuilder: (BuildContext context, int index) {
+                  List<Widget> children = [];
+                  if(index == 0){
+                    for (int i = 0; i < WeeklyTimes.times[this.locale].length; i++) {
+                      children.add(
+                          Container(
+                            height: 60.0,
+                            child: Indicator(WeeklyTimes.times[this.locale][i]),
+                          )
+                      );
+                    }
+                  }
+                  return Column(children: children);
+                }
+              ),
+              /*
+              ListView.builder(
+                  itemCount: WeeklyTimes.dates[this.locale].length,
+                  shrinkWrap: true,
+                  scrollDirection: Axis.horizontal,
+                  itemBuilder: (BuildContext context, int index) {
+                    List<Widget> children = [];
+                    if(index == 0){
+                      for (int i = 0; i < WeeklyTimes.times[this.locale].length; i++) {
+                        children.add(
+                            Container(
+                              height: 60.0,
+                              child: Indicator(WeeklyTimes.times[this.locale][i]),
+                            )
+                        );
+                      }
+                    }
+                    return Row(children: children);
+                  }
+              )
+              */
 
+        /*
         Expanded(
           child: ListView.builder( // list view를 요일별로 따로 만들어 줘...?
             // itemCount: WeeklyTimes.times[this.locale].length,
@@ -132,8 +175,8 @@ class _WeeklyTimeTableState extends State<WeeklyTimeTable> {
             },
 
           ),
-        ),
-      ],
+        ),*/
+        )],
     );
   }
 
