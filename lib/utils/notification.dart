@@ -13,7 +13,7 @@ class FirebaseCloudMessaging implements Noti {
       importance: Importance.max, priority: Priority.max); //Initate Android
   IOSNotificationDetails ios = IOSNotificationDetails(); // Initate IOS
 
-  NotificationDetails detail;
+  NotificationDetails? detail;
 
   static Future<void> backInit(RemoteMessage message) async {
     await Firebase.initializeApp(); // Initate flutterfire
@@ -61,10 +61,10 @@ class FirebaseCloudMessaging implements Noti {
         await Firebase.initializeApp();
 
         FirebaseMessaging?.onBackgroundMessage(FirebaseCloudMessaging.backInit);
-        RemoteMessage r = await FirebaseMessaging.instance.getInitialMessage();
+        RemoteMessage? r = await FirebaseMessaging.instance.getInitialMessage();
 
         print("INIT r : $r");
-        String token = await FirebaseMessaging.instance.getToken();
+        String? token = await FirebaseMessaging.instance.getToken();
         print("token : ${token ?? 'token NULL!'}");
         if (Platform.isIOS) {
           await FirebaseMessaging.instance
@@ -76,8 +76,8 @@ class FirebaseCloudMessaging implements Noti {
         }
 
         FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-          RemoteNotification notification = message.notification;
-          AndroidNotification android = message.notification?.android;
+          RemoteNotification? notification = message.notification;
+          AndroidNotification? android = message.notification?.android;
           if (notification != null && android != null) {
             flutterLocalNotificationsPlugin.show(notification.hashCode,
                 notification.title, notification.body, detail);

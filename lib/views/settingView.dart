@@ -38,7 +38,6 @@ class _SettingViewState extends State<SettingView> {
                 ),
               ],
             ),
-
       // This will be removed (TEST)
       floatingActionButton: FloatingActionButton(
         child: Text(

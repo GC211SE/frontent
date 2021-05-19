@@ -68,7 +68,7 @@ class _HomeViewState extends State<HomeView> {
   }
 
   Future<void> sendRequest() async {
-    String appToken = await FirebaseMessaging.instance.getToken();
+    String? appToken = await FirebaseMessaging.instance.getToken();
     print(appToken);
     await http.post(
       Uri.parse("https://gcse.doky.space/api/reservation/pushtest"),
