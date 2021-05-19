@@ -21,7 +21,10 @@ class Lecture {
   });
 
   factory Lecture.fromJson(dynamic json) {
-    return Lecture(date: json["date"] as String, time: json["time"] as String);
+    return Lecture(
+      date: json["dotw"].toString(),
+      time: json["name"].toString(),
+    );
   }
 
   @override
@@ -166,10 +169,19 @@ class _ReservationViewState extends State<ReservationView> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Expanded(
-              child: WeeklyTimeTable(
-                locale: 'ko',
-              ),
-              flex: 2),
+            child: WeeklyTimeTable(
+              locale: 'ko',
+              lec: lecture,
+            ),
+            flex: 2,
+          ),
+          ElevatedButton(
+            onPressed: () {
+              lecture.add(Lecture(date: "1", time: "1"));
+              setState(() {});
+            },
+            child: Text("Test to add lecture"),
+          ),
           Expanded(
             child: new Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,

@@ -19,7 +19,7 @@ class WeeklyTimeTable extends StatefulWidget {
   // use language
   final String locale;
 
-  List<Lecture> lec = []; // TODO: 강의 받아와서 저장 -> 요일 별 정렬 후 저장해 줍시다
+  final List<Lecture> lec; // TODO: 강의 받아와서 저장 -> 요일 별 정렬 후 저장해 줍시다
 
   WeeklyTimeTable({
     /* set color */
@@ -28,6 +28,7 @@ class WeeklyTimeTable extends StatefulWidget {
     this.boarderColor = Colors.grey,
     this.draggable = false,
     this.locale = "en",
+    required this.lec,
   });
 
   @override
@@ -38,7 +39,6 @@ class WeeklyTimeTable extends StatefulWidget {
 class _WeeklyTimeTableState extends State<WeeklyTimeTable> {
   List widgets = [];
   String locale = 'en';
-  List<Lecture> lec = [];
 
   // _WeeklyTimeTableState(this.selected);
   _WeeklyTimeTableState();
@@ -48,9 +48,9 @@ class _WeeklyTimeTableState extends State<WeeklyTimeTable> {
     if (WeeklyTimes.localContains(widget.locale)) {
       setState(() {
         /// TEST TODO: remove test
-        lec.add(Lecture(date: "1", time: "1"));
+        // widget.lec.add(Lecture(date: "1", time: "1"));
         // lec.add(Lecture(date: "1", time: "2"));
-        lec.add(Lecture(date: "3", time: "21"));
+        // widget.lec.add(Lecture(date: "3", time: "21"));
         // lec.add(Lecture(date: "3", time: "22"));
 
         locale = widget.locale;
@@ -82,9 +82,9 @@ class _WeeklyTimeTableState extends State<WeeklyTimeTable> {
               for (int dateIdx = 0; dateIdx < 7; dateIdx++) {
                 isLecture = false;
                 for (int lectureIdx = 0;
-                    lectureIdx < lec.length;
+                    lectureIdx < widget.lec.length;
                     lectureIdx++) {
-                  if (dateIdx == int.parse(lec[lectureIdx].date) &&
+                  if (dateIdx == int.parse(widget.lec[lectureIdx].date) &&
                       index == dateIdx) {
                     // TODO: if lecture가 있을때
                     /// timecal.return을 해서 잘 해서 잘 그린다...
