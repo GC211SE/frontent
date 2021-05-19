@@ -28,6 +28,10 @@ dependencies:
   flutter_local_notifications: 5.0.0
   permission_handler: ^7.1.0
 
+  # For reservation
+  f_datetimerangepicker: ^0.1.4
+  # TODO: Change to https://pub.dev/packages/flutter_datetime_picker
+
 dev_dependencies:
   flutter_test:
     sdk: flutter    
