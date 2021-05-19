@@ -14,7 +14,6 @@ class Cell extends StatefulWidget {
 }
 
 class _CellState extends State<Cell> {
-
   @override
   void initState() {
     super.initState();
@@ -44,7 +43,7 @@ class LectureBox extends StatefulWidget {
   final double height;
 
   LectureBox({
-    @required this.height,
+    required this.height,
     this.cellColor = Colors.blue,
     this.boarderColor = Colors.grey,
   });
@@ -54,7 +53,6 @@ class LectureBox extends StatefulWidget {
 }
 
 class _LectureBoxState extends State<LectureBox> {
-
   @override
   void initState() {
     super.initState();
@@ -62,15 +60,15 @@ class _LectureBoxState extends State<LectureBox> {
 
   @override
   Widget build(BuildContext context) => Container(
-      decoration: BoxDecoration(
-        color: widget.cellColor,
-        border: Border(
-          top: BorderSide(width: 1.0, color: widget.boarderColor),
-          left: BorderSide(width: 0.0, color: widget.boarderColor),
-          right: BorderSide(width: 0.0, color: widget.boarderColor),
+        decoration: BoxDecoration(
+          color: widget.cellColor,
+          border: Border(
+            top: BorderSide(width: 1.0, color: widget.boarderColor),
+            left: BorderSide(width: 0.0, color: widget.boarderColor),
+            right: BorderSide(width: 0.0, color: widget.boarderColor),
+          ),
         ),
-      ),
-      height: widget.height,
-      width: MediaQuery.of(context).size.width / 8, // 디바이스 넓이 / 8
-    );
+        height: widget.height,
+        width: MediaQuery.of(context).size.width / 8, // 디바이스 넓이 / 8
+      );
 }

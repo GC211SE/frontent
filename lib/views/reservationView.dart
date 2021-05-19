@@ -7,20 +7,20 @@ import 'package:http/http.dart' as http;
 import 'package:f_datetimerangepicker/f_datetimerangepicker.dart';
 
 var thisContext;
-int count =0;
+int count = 0;
 // https://gcse.doky.space/api/schedule?bd=IT대학&crn=304
 // TODO: make class to save lecture
 
 class Lecture {
-  String date; // 요일
-  String time; // 시간 -> 밑에 MAP 으로 시간 알아봅시다
+  final String date; // 요일
+  final String time; // 시간 -> 밑에 MAP 으로 시간 알아봅시다
 
   Lecture({
-    this.date,
-    this.time,
+    this.date = "",
+    this.time = "",
   });
 
-  factory Lecture.fromJson(dynamic json){
+  factory Lecture.fromJson(dynamic json) {
     return Lecture(date: json["date"] as String, time: json["time"] as String);
   }
 
@@ -29,51 +29,59 @@ class Lecture {
     return '{Lecture{date: $date}, Lecture{time: $time}}';
   }
 
-  timeCalculator(int time){
+  timeCalculator(int time) {
     // split nth 교시 to hour and minute
-    int startHour = int.parse(convertToActualTime[time][0].substring(0,2));
-    int startMinute = int.parse(convertToActualTime[time][0].substring(2,4));
-    int endHour = int.parse(convertToActualTime[time][1].substring(0,2));
-    int endMinute = int.parse(convertToActualTime[time][1].substring(2,4));
+    int startHour = int.parse(convertToActualTime[time]![0].substring(0, 2));
+    int startMinute = int.parse(convertToActualTime[time]![0].substring(2, 4));
+    int endHour = int.parse(convertToActualTime[time]![1].substring(0, 2));
+    int endMinute = int.parse(convertToActualTime[time]![1].substring(2, 4));
     int height = 60;
 
     Map<int, List<int>> hourSplit = {};
+
     /// 시간 계산 ----------------> 끝
     /// 만약 시간 차가 1이라면 2개의 셀에 시간표를 그려줘야함  -> list에 2개의 시간대
     /// 아니라면 1개의 셀을 잘라서 쓰면 됨 -> list에 1개의 시간대
     /// 분 계산
     /// list (hour index(height, bool) * 2) -> true 면 height 만큼 칠해주고 false 면 안칠해주기, hour index에 해당하는 시간에
-    if (startHour == endHour){
-      if (startMinute == 0){ // 앞에 붙은 1, 0
-        hourSplit.addAll({startHour:[
-          startMinute, 1,
-          60 - endMinute, 0]});
+    if (startHour == endHour) {
+      if (startMinute == 0) {
+        // 앞에 붙은 1, 0
+        hourSplit.addAll({
+          startHour: [startMinute, 1, 60 - endMinute, 0]
+        });
+      } else if (endMinute < 60) {
+        // 0, 가운데 낀 1, 0
+        hourSplit.addAll({
+          startHour: [
+            startMinute,
+            0,
+            60 - endMinute - startMinute,
+            1,
+            60 - endMinute,
+            0
+          ]
+        });
+      } else {
+        // 0, 뒤에 붙은 1
+        hourSplit.addAll({
+          startHour: [endMinute, 0, 60 - endMinute, 1]
+        });
       }
-      else if (endMinute < 60){ // 0, 가운데 낀 1, 0
-        hourSplit.addAll({startHour:[
-          startMinute, 0,
-          60 - endMinute - startMinute, 1,
-          60 - endMinute, 0]});
-      }
-      else { // 0, 뒤에 붙은 1
-        hourSplit.addAll({startHour:[
-          endMinute, 0,
-          60 - endMinute, 1]});
-      }
-    }
-    else{ // (0,1), (1,0)
-      if (endMinute != 0){
-        hourSplit.addAll({startHour:[
-          startMinute, 0,
-          60 - startMinute, 1]});
-        hourSplit.addAll({endHour:[
-          endMinute, 1,
-          60 - endMinute, 0]});
-      }
-      else { // (0,1),
-        hourSplit.addAll({startHour:[
-          startMinute, 0,
-          60 - startMinute, 1]});
+    } else {
+      // (0,1), (1,0)
+      if (endMinute != 0) {
+        hourSplit.addAll({
+          startHour: [startMinute, 0, 60 - startMinute, 1]
+        });
+        hourSplit.addAll({
+          endHour: [endMinute, 1, 60 - endMinute, 0]
+        });
+      } else {
+        // (0,1),
+        hourSplit.addAll({
+          startHour: [startMinute, 0, 60 - startMinute, 1]
+        });
       }
       // hourSplit.addAll({startHour:[1,1]});
       // 60 - startMinute;
@@ -100,7 +108,6 @@ class Lecture {
     '12': ["20:15", "21:05"],
     '13': ["21:10", "22:00"],
     '14': ["22:05", "22:55"],
-
     '21': ["09:30", "10:45"],
     '22': ["11:00", "12:15"],
     '23': ["13:00", "14:15"],
@@ -115,7 +122,6 @@ class ReservationView extends StatefulWidget {
 }
 
 class _ReservationViewState extends State<ReservationView> {
-
   var data;
   List<Lecture> lecture = [];
   String bd = "IT대학";
@@ -123,14 +129,13 @@ class _ReservationViewState extends State<ReservationView> {
 
   Future<String> getData() async {
     http.Response res = await http.get(Uri.parse(
-        "https://gcse.doky.space/api/schedule?bd="+bd+"&crn="+crn));
+        "https://gcse.doky.space/api/schedule?bd=" + bd + "&crn=" + crn));
     this.setState(() {
       data = jsonDecode(res.body)["result"];
-      data.forEach((element){
-        count ++;
+      data.forEach((element) {
+        count++;
         lecture.add(Lecture.fromJson(element));
       });
-
     });
 
     return "success";
@@ -148,7 +153,6 @@ class _ReservationViewState extends State<ReservationView> {
   TextEditingController endControl = TextEditingController();
   @override
   Widget build(BuildContext context) {
-
     thisContext = context;
     return Scaffold(
       appBar: AppBar(
@@ -158,81 +162,92 @@ class _ReservationViewState extends State<ReservationView> {
       /*** timetable ***/
       body: Container(
           child: Column(
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Expanded(child: WeeklyTimeTable(
+        mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Expanded(
+              child: WeeklyTimeTable(
                 locale: 'ko',
-
               ),
-                flex: 2
-              ),
-              Expanded(child: new Column(
+              flex: 2),
+          Expanded(
+            child: new Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Container(
-                    margin: EdgeInsets.only(bottom:40.0, top:10.0),
-                    child:  Column(
+                    margin: EdgeInsets.only(bottom: 40.0, top: 10.0),
+                    child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
                         Container(
                           margin: EdgeInsets.only(bottom: 10.0),
-                          child: RaisedButton(
-                              child: Text("Select Time",style: new TextStyle(fontSize: 20),),
-                              onPressed:(){
-                                DateTimeRangePicker(
-                                    startText: "From",
-                                    endText: "To",
-                                    doneText: "Yes",
-                                    cancelText: "Cancel",
-                                    interval: 5,
-                                    // 지금 시간에서 1시간 이후부터 예약가능
-                                    initialStartTime: DateTime.now().add(Duration(hours: 1)),
-                                    // 끝나는 시각은 2시간 이후
-                                    initialEndTime: DateTime.now().add(Duration(hours: 2)),
-                                    mode: DateTimeRangePickerMode.dateAndTime,
-                                    minimumTime: DateTime.now().subtract(Duration(days: 5)),
-                                    maximumTime: DateTime.now().add(Duration(days: 25)),
-                                    use24hFormat: true,
-                                    onConfirm: (start, end) {
-                                      setState(() {
-                                        startTime = start;
-                                        endTime = end;
-                                      });
-                                    }).showPicker(context);
-                              },
+                          child: ElevatedButton(
+                            child: Text(
+                              "Select Time",
+                              style: new TextStyle(fontSize: 20),
+                            ),
+                            onPressed: () {
+                              DateTimeRangePicker(
+                                  startText: "From",
+                                  endText: "To",
+                                  doneText: "Yes",
+                                  cancelText: "Cancel",
+                                  interval: 5,
+                                  // 지금 시간에서 1시간 이후부터 예약가능
+                                  initialStartTime:
+                                      DateTime.now().add(Duration(hours: 1)),
+                                  // 끝나는 시각은 2시간 이후
+                                  initialEndTime:
+                                      DateTime.now().add(Duration(hours: 2)),
+                                  mode: DateTimeRangePickerMode.dateAndTime,
+                                  minimumTime: DateTime.now()
+                                      .subtract(Duration(days: 5)),
+                                  maximumTime:
+                                      DateTime.now().add(Duration(days: 25)),
+                                  use24hFormat: true,
+                                  onConfirm: (start, end) {
+                                    setState(() {
+                                      startTime = start;
+                                      endTime = end;
+                                    });
+                                  }).showPicker(context);
+                            },
                           ),
                         ),
-                        Text( // 시작 시간 표시 (처음 실행때는 현재시각)
-                            'Start Time : '+startTime.hour.toString()+":"+startTime.minute.toString(),
-                            style: TextStyle(fontSize: 20.0)
-                        ),
-                        Text( // 종료 시간 표시 (처음 실행때는 현재시각)
-                            'end Time : '+endTime.hour.toString()+":"+endTime.minute.toString(),
+                        Text(
+                            // 시작 시간 표시 (처음 실행때는 현재시각)
+                            'Start Time : ' +
+                                startTime.hour.toString() +
+                                ":" +
+                                startTime.minute.toString(),
+                            style: TextStyle(fontSize: 20.0)),
+                        Text(
+                            // 종료 시간 표시 (처음 실행때는 현재시각)
+                            'end Time : ' +
+                                endTime.hour.toString() +
+                                ":" +
+                                endTime.minute.toString(),
                             style: TextStyle(fontSize: 20.0))
                       ],
                     ),
                   ),
-
-                  RaisedButton( // 예약
-                      child: Text("Reserve",style: new TextStyle(fontSize: 20)),
-                      onPressed: (){
-                          showAlertDialog(context);
+                  ElevatedButton(
+                      // 예약
+                      child:
+                          Text("Reserve", style: new TextStyle(fontSize: 20)),
+                      onPressed: () {
+                        showAlertDialog(context);
                       })
                 ]),
-              ),
-              /***  ***/
-            ],
-
-          )
-      ),
-
-
+          ),
+          /***  ***/
+        ],
+      )),
       floatingActionButton: Stack(
         children: <Widget>[
-
           /*** This will be removed (TEST) ***/
-          Padding(padding: EdgeInsets.only(),
+          Padding(
+            padding: EdgeInsets.only(),
             child: Align(
               alignment: Alignment.bottomRight,
               child: FloatingActionButton(
@@ -244,27 +259,26 @@ class _ReservationViewState extends State<ReservationView> {
                   style: TextStyle(fontSize: 10),
                 ),
               ),
-            ),),
+            ),
+          ),
         ],
-
       ),
     );
   }
-  showAlertDialog(BuildContext context) {
 
+  showAlertDialog(BuildContext context) {
     // set up the buttons
-    Widget cancelButton = FlatButton(
+    Widget cancelButton = ElevatedButton(
       child: Text("Cancel"),
-      onPressed:  () {
+      onPressed: () {
         // 이전 화면으로
         Navigator.pop(context);
       },
     );
-    Widget continueButton = FlatButton(
+    Widget continueButton = ElevatedButton(
       child: Text("Continue"),
-      onPressed:  () {
+      onPressed: () {
         // 예약
-
       },
     );
 
@@ -272,8 +286,18 @@ class _ReservationViewState extends State<ReservationView> {
     AlertDialog alert = AlertDialog(
       title: Text(""),
       // 강의실 받아온거 추가해야함
-      content: Text(count.toString()+"\n"+startTime.hour.toString()+":"+startTime.minute.toString()+" ~ "+
-          endTime.hour.toString()+":"+endTime.minute.toString()+"\nwould you like to continue?", textAlign: TextAlign.center),
+      content: Text(
+          count.toString() +
+              "\n" +
+              startTime.hour.toString() +
+              ":" +
+              startTime.minute.toString() +
+              " ~ " +
+              endTime.hour.toString() +
+              ":" +
+              endTime.minute.toString() +
+              "\nwould you like to continue?",
+          textAlign: TextAlign.center),
       actions: [
         cancelButton,
         continueButton,

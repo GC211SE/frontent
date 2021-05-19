@@ -8,8 +8,6 @@ import 'package:gcrs/src/weekly_times.dart';
 import 'package:http/http.dart' as http;
 import 'package:gcrs/views/reservationView.dart';
 
-
-
 class WeeklyTimeTable extends StatefulWidget {
   /*** variables ***/
   // color
@@ -42,7 +40,6 @@ class _WeeklyTimeTableState extends State<WeeklyTimeTable> {
   String locale = 'en';
   List<Lecture> lec = [];
 
-
   // _WeeklyTimeTableState(this.selected);
   _WeeklyTimeTableState();
 
@@ -71,40 +68,37 @@ class _WeeklyTimeTableState extends State<WeeklyTimeTable> {
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         /* day bar (top) */
-        Header(WeeklyTimes.dates[this.locale]), // 일, 월, 화, 수 ... 토
+        Header(WeeklyTimes.dates[this.locale]!), // 일, 월, 화, 수 ... 토
         Expanded(
           child: ListView.builder(
             shrinkWrap: true,
             scrollDirection: Axis.vertical,
-            itemCount: WeeklyTimes.times[this.locale].length,
+            itemCount: WeeklyTimes.times[this.locale]!.length,
             itemBuilder: (BuildContext context, int index) {
               List<Widget> children = [];
               /* time bar (left) */
-              children.add(
-                  Indicator(WeeklyTimes.times[this.locale][index])
-              );
+              children.add(Indicator(WeeklyTimes.times[this.locale]![index]));
               bool isLecture;
-              for (int dateIdx = 0; dateIdx < 7; dateIdx++){
+              for (int dateIdx = 0; dateIdx < 7; dateIdx++) {
                 isLecture = false;
-                for (int lectureIdx = 0; lectureIdx < lec.length; lectureIdx++){
-                  if (dateIdx == int.parse(lec[lectureIdx].date) && index == dateIdx){
+                for (int lectureIdx = 0;
+                    lectureIdx < lec.length;
+                    lectureIdx++) {
+                  if (dateIdx == int.parse(lec[lectureIdx].date) &&
+                      index == dateIdx) {
                     // TODO: if lecture가 있을때
                     /// timecal.return을 해서 잘 해서 잘 그린다...
                     isLecture = true;
-                    children.add(
-                        Column(
-                          children: [
-                            LectureBox(height: 30),
-                            LectureBox(height: 30),
-                          ],
-                        )
-                    );
+                    children.add(Column(
+                      children: [
+                        LectureBox(height: 30),
+                        LectureBox(height: 30),
+                      ],
+                    ));
                   }
                 }
-                if (isLecture == false){
-                  children.add(
-                      Cell()
-                  );
+                if (isLecture == false) {
+                  children.add(Cell());
                 }
               }
               /*
@@ -136,7 +130,8 @@ class _WeeklyTimeTableState extends State<WeeklyTimeTable> {
   }
 
   loadData() async {
-    Uri dataURL = Uri.parse("https://gcse.doky.space/api/schedule?bd=IT대학&crn=304");
+    Uri dataURL =
+        Uri.parse("https://gcse.doky.space/api/schedule?bd=IT대학&crn=304");
     http.Response response = await http.get(dataURL);
     setState(() {
       // TODO: change 적용이 이안에 들어가야할 듯?

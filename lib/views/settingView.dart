@@ -2,9 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:gcrs/utils/GlobalVariables.dart';
 
 class SettingView extends StatefulWidget {
-  SettingView({Key key, this.title}) : super(key: key);
-
-  final String title;
   @override
   _SettingViewState createState() => _SettingViewState();
 }
@@ -15,32 +12,32 @@ class _SettingViewState extends State<SettingView> {
     return Scaffold(
       body: MediaQuery.of(context).size.width > GlobalVariables.mobileWidth
           ?
-      // Desktop(Web) UI
-      Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text("SettingView - Desktop"),
-            ],
-          ),
-        ],
-      )
+          // Desktop(Web) UI
+          Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text("SettingView - Desktop"),
+                  ],
+                ),
+              ],
+            )
           :
-      // Mobile(App) UI
-      // Implement design code here
-      Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text("SettingView - Mobile"),
-            ],
-          ),
-        ],
-      ),
+          // Mobile(App) UI
+          // Implement design code here
+          Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text("SettingView - Mobile"),
+                  ],
+                ),
+              ],
+            ),
       // This will be removed (TEST)
       floatingActionButton: FloatingActionButton(
         child: Text(
