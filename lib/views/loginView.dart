@@ -42,7 +42,7 @@ class _LoginViewState extends State<LoginView> {
                 obscureText: true,
                 decoration: new InputDecoration(labelText: 'Password'),
               ),
-              new RaisedButton(
+              new ElevatedButton(
                   child: new Text(
                     'Login',
                     style: new TextStyle(fontSize: 20.0),
@@ -82,7 +82,7 @@ class _LoginViewState extends State<LoginView> {
                             ],
                           ),
                           actions: <Widget>[
-                            new FlatButton(
+                            new ElevatedButton(
                               child: new Text("OK"),
                               onPressed: () {
                                 Navigator.pop(context);

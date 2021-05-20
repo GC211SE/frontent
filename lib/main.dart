@@ -3,8 +3,6 @@ import 'package:gcrs/views/homeView.dart';
 import 'package:gcrs/views/loginView.dart';
 import 'package:gcrs/views/reservationView.dart';
 import 'package:gcrs/views/settingView.dart';
-import 'package:gcrs/views/SearchView.dart';
-import 'package:get/get.dart';
 
 void main() {
   runApp(MyApp());
@@ -18,8 +16,8 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
-    return GetMaterialApp(
-      home: SearchView(),
+    return MaterialApp(
+      home: HomeView(),
       routes: {
         "/LoginView": (_) => LoginView(),
         "/HomeView": (_) => HomeView(),
