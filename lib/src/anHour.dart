@@ -31,7 +31,7 @@ class _CellState extends State<Cell> {
             right: BorderSide(width: 0.0, color: widget.boarderColor),
           ),
         ),
-        height: 60,
+        height: 60 *4/5,
       ),
     );
   }
@@ -80,7 +80,7 @@ class _LectureBoxState extends State<LectureBox> {
             right: BorderSide(width: 0.0, color: widget.boarderColor),
           ),
         ),
-        height: widget.height,
+        height: widget.height *4/5,
         width: MediaQuery.of(context).size.width / 8, // 디바이스 넓이 / 8
       );
 }

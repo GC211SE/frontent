@@ -118,6 +118,7 @@ class _ReservationViewState extends State<ReservationView> {
             },
             child: Text("Test to add lecture"),
           ),
+          /*
           Expanded(
             child: new Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -188,6 +189,7 @@ class _ReservationViewState extends State<ReservationView> {
                       })
                 ]),
           ),
+          */
           /***  ***/
         ],
       )),

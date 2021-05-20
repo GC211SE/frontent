@@ -113,20 +113,20 @@ class _WeeklyTimeTableState extends State<WeeklyTimeTable> {
                   for (int count = 0; count < RenderSpecificIdx.length; count){ // TODO : renderSpecificIdx  start minute 순으로 정렬
                     /*** 0: lecture, 1: reservation, 2: nothing? ***/
                     /*** 0: orange, 1: blue, 2: teal ***/
-                    if (renderedTime > RSS[RenderSpecificIdx[count]].startMinute){
+                    if (renderedTime > RSS[RenderSpecificIdx[count]].startMinute){ /// 시작시간보다 그린시간이 크면 이건 이상한거임
                       if(renderedTime >= RSS[RenderSpecificIdx[count]].endMinute){ /// 만약 중복되는 시간에 뭔가 있으면 뛰어 넘는다.
                         count++;
                       }
 
                     }
-                    else if (renderedTime == RSS[RenderSpecificIdx[count]].startMinute){
+                    else if (renderedTime == RSS[RenderSpecificIdx[count]].startMinute){ /// 같으면 앞에꺼를 잘 그려준거임 --> 다음 강의를 그려주면 됨
                       lecturecell.add(LectureBox(height: RSS[RenderSpecificIdx[count]].endMinute.toDouble() - RSS[RenderSpecificIdx[count]].startMinute.toDouble(), type:  RSS[RenderSpecificIdx[count]].type));
                       renderedTime = RSS[RenderSpecificIdx[count]].endMinute;
                       count++;
                     }
-                    else{
+                    else{ /// 앞에 시간이 모자라면 빈칸을 그려줘야함
+                      lecturecell.add(LectureBox(height: RSS[RenderSpecificIdx[count]].startMinute.toDouble() - renderedTime, type: 2));
                       renderedTime = RSS[RenderSpecificIdx[count]].startMinute;
-                      lecturecell.add(LectureBox(height: RSS[RenderSpecificIdx[count]].startMinute.toDouble() - renderedTime, type: 1));
 
                     }
                   }
