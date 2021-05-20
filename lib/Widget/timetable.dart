@@ -25,6 +25,28 @@ class RenderSpecificSave {
     required this.endMinute,
     required this.type,
   });
+
+  lectureToSpecific(List<Lecture> lec){
+    List<RenderSpecificSave> renderSpecificSave = [];
+    for (int i = 0; i < lec.length; i++){
+      /// time string 을 int형 시간과 분으로 바꿔줌
+      int startHour = int.parse(Lecture.convertToActualTime[lec[i].time]![0].substring(0, 2));
+      int startMinute = int.parse(Lecture.convertToActualTime[lec[i].time]![0].substring(2, 4));
+      int endHour = int.parse(Lecture.convertToActualTime[lec[i].time]![1].substring(0, 2));
+      int endMinute = int.parse(Lecture.convertToActualTime[lec[i].time]![1].substring(2, 4));
+      
+      /// 쪼개줌
+      for (int j = startHour; j <= endHour; j++){
+
+
+      }
+
+      /// 리턴함
+
+
+    }
+    return renderSpecificSave;
+  }
 }
 
 class WeeklyTimeTable extends StatefulWidget {
@@ -72,6 +94,8 @@ class _WeeklyTimeTableState extends State<WeeklyTimeTable> {
         widget.lec.add(Lecture(date: "3", time: "21"));
         widget.lec.add(Lecture(date: "3", time: "22"));
 
+        
+        // TODO: lec을 specific으로 바꿔주는 함수 호출
         locale = widget.locale;
       });
     }
