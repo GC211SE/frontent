@@ -19,6 +19,7 @@ dependencies:
   floating_search_bar: ^0.3.0    
   cupertino_icons: ^1.0.2
   flutter_search_bar: ^2.1.0
+  dart_des: ^1.0.0
   get: ^4.1.4
   
   # For cloud messaging
@@ -26,7 +27,8 @@ dependencies:
   firebase_core: 1.1.0
   flutter_local_notifications: 5.0.0
   permission_handler: ^7.1.0
-
+  shared_preferences: ^2.0.5
+  
   # For reservation
   f_datetimerangepicker: ^0.1.4
   # TODO: Change to https://pub.dev/packages/flutter_datetime_picker
