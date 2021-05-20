@@ -25,28 +25,6 @@ class RenderSpecificSave {
     required this.endMinute,
     required this.type,
   });
-
-  lectureToSpecific(List<Lecture> lec){
-    List<RenderSpecificSave> renderSpecificSave = [];
-    for (int i = 0; i < lec.length; i++){
-      /// time string 을 int형 시간과 분으로 바꿔줌
-      int startHour = int.parse(Lecture.convertToActualTime[lec[i].time]![0].substring(0, 2));
-      int startMinute = int.parse(Lecture.convertToActualTime[lec[i].time]![0].substring(2, 4));
-      int endHour = int.parse(Lecture.convertToActualTime[lec[i].time]![1].substring(0, 2));
-      int endMinute = int.parse(Lecture.convertToActualTime[lec[i].time]![1].substring(2, 4));
-      
-      /// 쪼개줌
-      for (int j = startHour; j <= endHour; j++){
-
-
-      }
-
-      /// 리턴함
-
-
-    }
-    return renderSpecificSave;
-  }
 }
 
 class WeeklyTimeTable extends StatefulWidget {
@@ -88,20 +66,13 @@ class _WeeklyTimeTableState extends State<WeeklyTimeTable> {
   void initState() {
     if (WeeklyTimes.localContains(widget.locale)) {
       setState(() {
-        /// TEST TODO: remove test
-        // widget.lec.add(Lecture(date: "1", time: "1"));
-        widget.lec.add(Lecture(date: "1", time: "2"));
-        widget.lec.add(Lecture(date: "3", time: "21"));
-        widget.lec.add(Lecture(date: "3", time: "22"));
-
-        
-        // TODO: lec을 specific으로 바꿔주는 함수 호출
         locale = widget.locale;
       });
     }
 
     super.initState();
     loadData();
+
   }
 
   /* render timetable */
@@ -121,30 +92,34 @@ class _WeeklyTimeTableState extends State<WeeklyTimeTable> {
               List<Widget> children = [];
               /* time bar (left) */
               children.add(Indicator(WeeklyTimes.times[this.locale]![index]));
-              bool isLecture;
+              
+              /// cell 단위로 쪼개줌
+              List<RenderSpecificSave> RSS = lectureToSpecific(widget.lec);
+
               for (int dateIdx = 0; dateIdx < 7; dateIdx++) {
-                isLecture = false;
-                for (int lectureIdx = 0;
-                    lectureIdx < widget.lec.length;
-                    lectureIdx++) {
-                  if (dateIdx == int.parse(widget.lec[lectureIdx].date) &&
-                      index == dateIdx) {
-                    // TODO: if lecture가 있을때
-                    /// timecal.return을 해서 잘 해서 잘 그린다...
+                bool isLecture = false;
+                int renderedTime = 0;
+                List<int> RenderSpecificIdx = []; // 한개의 cell 대신 그려야하는 class와 reservation의 모든것
+                for (int RSSIdx = 0; RSSIdx < RSS.length; RSSIdx++) {
+                  if (dateIdx == RSS[RSSIdx].date && index == RSS[RSSIdx].hour - 9) {
                     isLecture = true;
-                    children.add(Column(
-                      children: [
-                        LectureBox(height: 30, type: 1),
-                        LectureBox(height: 30, type: 2),
-                      ],
-                    ));
+                    RenderSpecificIdx.add(RSSIdx);
                   }
                 }
-                if (isLecture == false) {
+                if (isLecture == true){
+                  children.add(Column(
+                    children: [
+                      // Text(RSS[RenderSpecificIdx[0]].startMinute.toString() + " " + RSS[RenderSpecificIdx[0]].endMinute.toString()),
+                      LectureBox(height: RSS[RenderSpecificIdx[0]].endMinute.toDouble() - RSS[RenderSpecificIdx[0]].startMinute.toDouble(), type: 1),
+                      // LectureBox(height: 30, type: 2),
+                      // LectureBox(height: 10, type: 0),
+                    ],
+                  ));
+                }
+                else if (isLecture == false) {
                   children.add(Cell());
                 }
-              }
-              return Row(children: children);
+              }return Row(children: children);
             },
           ),
         ),
@@ -157,4 +132,40 @@ class _WeeklyTimeTableState extends State<WeeklyTimeTable> {
       // TODO: reservation받아와서 바꿈
     });
   }
+}
+
+List<RenderSpecificSave> lectureToSpecific(List<Lecture> lec){
+  List<RenderSpecificSave> renderSpecificSave = [];
+
+  for (int i = 0; i < lec.length; i++){
+    /// time string 을 int형 시간과 분으로 바꿔줌
+    int startHour = int.parse(Lecture.convertToActualTime[lec[i].time]![0].substring(0, 2));
+    int startMinute = int.parse(Lecture.convertToActualTime[lec[i].time]![0].substring(3, 5));
+    int endHour = int.parse(Lecture.convertToActualTime[lec[i].time]![1].substring(0, 2));
+    int endMinute = int.parse(Lecture.convertToActualTime[lec[i].time]![1].substring(3, 5));
+
+    /// 쪼개줌
+    for (int j = startHour; j <= endHour; j++){
+      if (j == startHour && j == endHour){ // 같은 시간(cell)에 start, end 다 있을경우
+        if (endMinute == 0){
+          renderSpecificSave.add(new RenderSpecificSave(date: int.parse(lec[i].date), hour: j, startMinute: startMinute, endMinute: 60, type: 0));
+        }
+        else{
+          renderSpecificSave.add(new RenderSpecificSave(date: int.parse(lec[i].date), hour: j, startMinute: startMinute, endMinute: endMinute, type: 0));
+        }
+      }
+      else if( j == startHour){ // 시작 시간(cell)인 경우
+        renderSpecificSave.add(new RenderSpecificSave(date: int.parse(lec[i].date), hour: j, startMinute: startMinute, endMinute: 60, type: 0));
+      }
+      else if (j == endHour){
+        renderSpecificSave.add(new RenderSpecificSave(date: int.parse(lec[i].date), hour: j, startMinute: 0, endMinute: endMinute, type: 0));
+      }
+      else{
+        renderSpecificSave.add(new RenderSpecificSave(date: int.parse(lec[i].date), hour: j, startMinute: 0, endMinute: 60, type: 0));
+      }
+    }
+  }
+
+  /// 리턴함
+  return renderSpecificSave;
 }
