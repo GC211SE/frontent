@@ -28,6 +28,7 @@ class _HomeViewState extends State<HomeView> {
       appBar: AppBar(
         backgroundColor: Color.fromRGBO(250, 250, 250, 1),
         elevation: 0,
+        toolbarHeight: 30,
       ),
       backgroundColor: Color.fromRGBO(250, 250, 250, 1),
       body: MediaQuery.of(context).size.width > GlobalVariables.mobileWidth
@@ -203,7 +204,7 @@ class _HomeViewState extends State<HomeView> {
                     child: Text(
                       "현재 예약 🕑",
                       style: TextStyle(
-                        fontSize: 30,
+                        fontSize: 25,
                         fontWeight: FontWeight.w800,
                       ),
                     ),
@@ -326,7 +327,7 @@ class _HomeViewState extends State<HomeView> {
                     child: Text(
                       "즐겨찾기 ⭐️",
                       style: TextStyle(
-                        fontSize: 30,
+                        fontSize: 25,
                         fontWeight: FontWeight.w800,
                       ),
                     ),
