@@ -156,21 +156,28 @@ class _HomeViewState extends State<HomeView> {
 
   // User widget
   Widget user() {
+    print(GlobalVariables.userImg);
     return Container(
       child: Row(
         children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(35),
-            child: Image(
-              width: 35,
-              height: 35,
-              image: AssetImage("assets/img/sample.png"),
+          Card(
+            elevation: 2.5,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(37),
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(37),
+              child: Image.network(
+                GlobalVariables.userImg,
+                width: 37,
+                height: 37,
+              ),
             ),
           ),
           SizedBox(width: 10),
           Container(
             child: Text(
-              "안녕하세요 OOO님",
+              "안녕하세요 ${GlobalVariables.userName}님",
               style: TextStyle(
                 fontSize: 15,
                 fontWeight: FontWeight.w800,
@@ -285,7 +292,7 @@ class _HomeViewState extends State<HomeView> {
       child: Card(
         elevation: 2.5,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(35),
+          borderRadius: BorderRadius.circular(37),
         ),
         child: Container(
           width: 37,
