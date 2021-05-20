@@ -98,7 +98,6 @@ class _WeeklyTimeTableState extends State<WeeklyTimeTable> {
 
               for (int dateIdx = 0; dateIdx < 7; dateIdx++) {
                 bool isLecture = false;
-                int renderedTime = 0;
                 List<int> RenderSpecificIdx = []; // 한개의 cell 대신 그려야하는 class와 reservation의 모든것
                 for (int RSSIdx = 0; RSSIdx < RSS.length; RSSIdx++) {
                   if (dateIdx == RSS[RSSIdx].date && index == RSS[RSSIdx].hour - 9) {
@@ -106,13 +105,32 @@ class _WeeklyTimeTableState extends State<WeeklyTimeTable> {
                     RenderSpecificIdx.add(RSSIdx);
                   }
                 }
+
                 if (isLecture == true){
+                  int renderedTime = 0;
+                  List<Widget> lecturecell = [];
+
+                  for (int count = 0; count < RenderSpecificIdx.length; count){ // TODO : renderSpecificIdx  start minute 순으로 정렬
+                    if (renderedTime < RSS[RenderSpecificIdx[count]].startMinute){
+                      /*** 0: lecture, 1: reservation, 2: nothing? ***/
+                      renderedTime = RSS[RenderSpecificIdx[count]].startMinute;
+                      lecturecell.add(LectureBox(height: RSS[RenderSpecificIdx[count]].startMinute.toDouble() - renderedTime, type: 2));
+                    }
+                    else{
+                      lecturecell.add(LectureBox(height: RSS[RenderSpecificIdx[count]].endMinute.toDouble() - RSS[RenderSpecificIdx[count]].startMinute.toDouble(), type:  RSS[RenderSpecificIdx[count]].type));
+                      renderedTime = RSS[RenderSpecificIdx[count]].endMinute;
+                      count++;
+                    }
+                  }
+
+                  if (renderedTime != 60){
+                    lecturecell.add(LectureBox(height: (60 - renderedTime).toDouble(), type: 2));
+                  }
                   children.add(Column(
                     children: [
-                      // Text(RSS[RenderSpecificIdx[0]].startMinute.toString() + " " + RSS[RenderSpecificIdx[0]].endMinute.toString()),
-                      LectureBox(height: RSS[RenderSpecificIdx[0]].endMinute.toDouble() - RSS[RenderSpecificIdx[0]].startMinute.toDouble(), type: 1),
-                      // LectureBox(height: 30, type: 2),
-                      // LectureBox(height: 10, type: 0),
+                      lecturecell[0],
+                      for (int hello = 0; hello < lecturecell.length; hello++)
+                        lecturecell[hello],
                     ],
                   ));
                 }
@@ -147,13 +165,17 @@ List<RenderSpecificSave> lectureToSpecific(List<Lecture> lec){
     /// 쪼개줌
     for (int j = startHour; j <= endHour; j++){
       if (j == startHour && j == endHour){ // 같은 시간(cell)에 start, end 다 있을경우
-        if (endMinute == 0){
+        renderSpecificSave.add(new RenderSpecificSave(date: int.parse(lec[i].date), hour: j, startMinute: startMinute, endMinute: endMinute, type: 0));
+        /*if (endMinute == 0){
           renderSpecificSave.add(new RenderSpecificSave(date: int.parse(lec[i].date), hour: j, startMinute: startMinute, endMinute: 60, type: 0));
         }
         else{
-          renderSpecificSave.add(new RenderSpecificSave(date: int.parse(lec[i].date), hour: j, startMinute: startMinute, endMinute: endMinute, type: 0));
-        }
+
+        }*/
       }
+
+
+
       else if( j == startHour){ // 시작 시간(cell)인 경우
         renderSpecificSave.add(new RenderSpecificSave(date: int.parse(lec[i].date), hour: j, startMinute: startMinute, endMinute: 60, type: 0));
       }
