@@ -51,13 +51,27 @@ class SearchView2 extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('강의실 선택')),
+      appBar: AppBar(
+        toolbarHeight: 200,
+        backgroundColor: Color.fromRGBO(250, 250, 250, 1),
+        elevation: 0,
+        centerTitle: true,
+        title: Text(
+          "$building\n강의실 선택하기",
+          style: TextStyle(
+            fontSize: 30,
+            color: Colors.black,
+            fontWeight: FontWeight.w800,
+          ),
+        ),
+      ),
       body: FutureBuilder<List<String>>(
           future: getData(),
           builder: (_, snapshot) {
             if (snapshot.connectionState != ConnectionState.done ||
                 snapshot.data == null) return Text('Loading');
             return ListView.builder(
+              physics: BouncingScrollPhysics(),
               itemCount: snapshot.data!.length,
               itemBuilder: (BuildContext context, int index) {
                 return buildRoomCard(snapshot.data![index]);
