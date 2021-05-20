@@ -57,11 +57,12 @@ class _LectureBoxState extends State<LectureBox> {
   @override
   void initState() {
     super.initState();
+    /*** 0: lecture, 1: reservation, 2: nothing? ***/
     if (widget.type == 0){
-      cellColor = Colors.blue;
+      cellColor = Colors.deepOrangeAccent;
     }
     else if (widget.type == 1){
-      cellColor = Colors.deepOrangeAccent;
+      cellColor = Colors.blue;
     }
     else if (widget.type == 2){
       cellColor = Colors.teal;
