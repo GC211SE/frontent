@@ -24,6 +24,7 @@ class _MyAppState extends State<MyApp> {
         "/SettingView": (_) => SettingView(),
         "/ReservationView": (_) => ReservationView(),
       },
+      theme: ThemeData(fontFamily: "Nanum"),
     );
   }
 }
