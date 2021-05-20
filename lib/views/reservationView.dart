@@ -1,13 +1,15 @@
 import 'dart:convert';
+import 'package:gcrs/views/homeView.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gcrs/Widget/timetable.dart';
 import 'package:gcrs/utils/GlobalVariables.dart';
+import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:f_datetimerangepicker/f_datetimerangepicker.dart';
 
 var thisContext;
-int count = 0;
+
 // https://gcse.doky.space/api/schedule?bd=IT대학&crn=304
 // TODO: make class to save lecture
 
@@ -21,7 +23,9 @@ class Lecture {
   });
 
   factory Lecture.fromJson(dynamic json) {
-    return Lecture(date: json["date"] as String, time: json["time"] as String);
+    return Lecture(
+        date: json["dotw"] as String,
+        time: json["name"] as String);
   }
 
   @override
@@ -29,64 +33,20 @@ class Lecture {
     return '{Lecture{date: $date}, Lecture{time: $time}}';
   }
 
-  timeCalculator(int time) {
+  timeCalculator(String time) { // dotw data 받아와서 시간 형식을 저장(start hour/minute, end hour/minute)
     // split nth 교시 to hour and minute
     int startHour = int.parse(convertToActualTime[time]![0].substring(0, 2));
-    int startMinute = int.parse(convertToActualTime[time]![0].substring(2, 4));
+    int startMinute = int.parse(convertToActualTime[time]![0].substring(3, 4));
     int endHour = int.parse(convertToActualTime[time]![1].substring(0, 2));
-    int endMinute = int.parse(convertToActualTime[time]![1].substring(2, 4));
+    int endMinute = int.parse(convertToActualTime[time]![1].substring(3, 4));
     int height = 60;
 
-    Map<int, List<int>> hourSplit = {};
+    List<int> hourSplit = [];
+    hourSplit.add(startHour);
+    hourSplit.add(startMinute);
+    hourSplit.add(endHour);
+    hourSplit.add(endMinute);
 
-    /// 시간 계산 ----------------> 끝
-    /// 만약 시간 차가 1이라면 2개의 셀에 시간표를 그려줘야함  -> list에 2개의 시간대
-    /// 아니라면 1개의 셀을 잘라서 쓰면 됨 -> list에 1개의 시간대
-    /// 분 계산
-    /// list (hour index(height, bool) * 2) -> true 면 height 만큼 칠해주고 false 면 안칠해주기, hour index에 해당하는 시간에
-    if (startHour == endHour) {
-      if (startMinute == 0) {
-        // 앞에 붙은 1, 0
-        hourSplit.addAll({
-          startHour: [startMinute, 1, 60 - endMinute, 0]
-        });
-      } else if (endMinute < 60) {
-        // 0, 가운데 낀 1, 0
-        hourSplit.addAll({
-          startHour: [
-            startMinute,
-            0,
-            60 - endMinute - startMinute,
-            1,
-            60 - endMinute,
-            0
-          ]
-        });
-      } else {
-        // 0, 뒤에 붙은 1
-        hourSplit.addAll({
-          startHour: [endMinute, 0, 60 - endMinute, 1]
-        });
-      }
-    } else {
-      // (0,1), (1,0)
-      if (endMinute != 0) {
-        hourSplit.addAll({
-          startHour: [startMinute, 0, 60 - startMinute, 1]
-        });
-        hourSplit.addAll({
-          endHour: [endMinute, 1, 60 - endMinute, 0]
-        });
-      } else {
-        // (0,1),
-        hourSplit.addAll({
-          startHour: [startMinute, 0, 60 - startMinute, 1]
-        });
-      }
-      // hourSplit.addAll({startHour:[1,1]});
-      // 60 - startMinute;
-      // endMinute;
-    }
     return hourSplit;
 
     /// cell 에 받은거 만큼 다른색으로 칠해주는 함수 추가 요망
@@ -124,8 +84,11 @@ class ReservationView extends StatefulWidget {
 class _ReservationViewState extends State<ReservationView> {
   var data;
   List<Lecture> lecture = [];
+  // 임의 값
+  String userid = "aaaa";
   String bd = "IT대학";
   String crn = "304";
+
 
   Future<String> getData() async {
     http.Response res = await http.get(Uri.parse(
@@ -133,7 +96,6 @@ class _ReservationViewState extends State<ReservationView> {
     this.setState(() {
       data = jsonDecode(res.body)["result"];
       data.forEach((element) {
-        count++;
         lecture.add(Lecture.fromJson(element));
       });
     });
@@ -144,7 +106,11 @@ class _ReservationViewState extends State<ReservationView> {
   @override
   void initState() {
     super.initState();
-    this.getData();
+    // this.getData(); // 데이터 받아오기
+
+    //임의로 데이터 넣어줌
+    lecture.add(Lecture(date: "1", time: "1"));
+    lecture.add(Lecture(date: "3", time: "21"));
   }
 
   DateTime startTime = DateTime.now();
@@ -265,8 +231,29 @@ class _ReservationViewState extends State<ReservationView> {
       ),
     );
   }
+  void _showDialog() { // 예약 불가
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        // return object of type Dialog
+        return AlertDialog(
+          title: new Text("Warning"),
+          content: new Text("This time cannot be reserved"),
+          actions: <Widget>[
+            new FlatButton(
+              child: new Text("Close"),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
 
-  showAlertDialog(BuildContext context) {
+
+  showAlertDialog(BuildContext context) { // reserve button
     // set up the buttons
     Widget cancelButton = ElevatedButton(
       child: Text("Cancel"),
@@ -277,17 +264,68 @@ class _ReservationViewState extends State<ReservationView> {
     );
     Widget continueButton = ElevatedButton(
       child: Text("Continue"),
-      onPressed: () {
-        // 예약
-      },
+      onPressed: () async {
+        int day = startTime.weekday;
+        int startH = startTime.hour;
+        int startM = startTime.minute;
+        int endH = endTime.hour;
+        int endM = endTime.minute;
+        for (Lecture lec in lecture) {
+          if (day.toString() == lec.date) { // 선택한 요일에 강의가 있으면
+            List<int> hourSplit = lec.timeCalculator(lec.time);
+
+            if (startH >= hourSplit[0] &&
+                startH <= hourSplit[2]) { // 시작 시간이 강의시간과 겹치면
+              if (startH == hourSplit[0] && startM >= hourSplit[1]) {
+                // 예약 불가
+                _showDialog();
+                return;
+              }
+              else if (startH == hourSplit[2] && startM <= hourSplit[3]) {
+                // 예약 불가
+                _showDialog();
+                return;
+              }
+            }
+            else if (endH >= hourSplit[0] &&
+                endH <= hourSplit[2]) { // 끝나는 시간이 강의시간과 겹치면
+              if (endH == hourSplit[0] && endM >= hourSplit[1]) {
+                // 예약 불가
+                _showDialog();
+                return;
+              }
+              else if (endH == hourSplit[2] && endM <= hourSplit[3]) {
+                // 예약 불가
+                _showDialog();
+                return;
+              }
+            }
+          }
+        }
+        http.Response res = await http.post(Uri.parse( // reservation API
+            "https://gcse.doky.space/api/reservation"),
+            body: {"userid": userid,
+              "start": startTime,
+              "end": endTime,
+              "bd": bd,
+              "crn": crn,
+              "fb_key": ""});
+
+        var resJ = jsonDecode(res.body);
+
+        if (resJ["success"] == true)  // 예약 성공
+          Navigator.pushNamed(context, "/HomeView"); // homeView로
+        else // 예약 실패
+          _showDialog();
+
+      }
     );
 
     // set up the AlertDialog
     AlertDialog alert = AlertDialog(
       title: Text(""),
-      // 강의실 받아온거 추가해야함
       content: Text(
-          count.toString() +
+          bd+" "+crn+
               "\n" +
               startTime.hour.toString() +
               ":" +
@@ -312,4 +350,6 @@ class _ReservationViewState extends State<ReservationView> {
       },
     );
   }
+
+
 }
