@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gcrs/utils/GlobalVariables.dart';
+import 'package:gcrs/utils/SharedPreferences.dart';
 import 'package:gcrs/views/homeView.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -14,16 +15,20 @@ class _LoginViewState extends State<LoginView> {
   String userId = "";
   String userPw = "";
 
-  String userName = "";
-  String userDept = "";
-  String userPhoto = "";
-
   bool isRunning = false;
   bool modalOpacity = false;
   bool isLoginFailed = false;
 
+  bool isFirst = true;
+  PreferencesManager pref = PreferencesManager.instance;
+
   @override
   Widget build(BuildContext context) {
+    if (isFirst) {
+      doInitialLogin();
+      isFirst = false;
+    }
+
     return Scaffold(
       backgroundColor: Color.fromRGBO(250, 250, 250, 1),
       body: Stack(
@@ -109,7 +114,8 @@ class _LoginViewState extends State<LoginView> {
                               // 아이디
                               TextFormField(
                                 onChanged: (value) => userId = value,
-                                onFieldSubmitted: (_) => doLogin(),
+                                onFieldSubmitted: (_) =>
+                                    doLogin(id: userId, password: userPw),
                                 decoration: InputDecoration(labelText: 'ID'),
                               ),
 
@@ -117,7 +123,8 @@ class _LoginViewState extends State<LoginView> {
                               TextFormField(
                                 onChanged: (value) => userPw = value,
                                 obscureText: true,
-                                onFieldSubmitted: (_) => doLogin(),
+                                onFieldSubmitted: (_) =>
+                                    doLogin(id: userId, password: userPw),
                                 decoration:
                                     InputDecoration(labelText: 'Password'),
                               ),
@@ -150,7 +157,8 @@ class _LoginViewState extends State<LoginView> {
                                   '로그인',
                                   style: TextStyle(fontSize: 20.0),
                                 ),
-                                onPressed: () => doLogin(),
+                                onPressed: () =>
+                                    doLogin(id: userId, password: userPw),
                               ),
                             ],
                           ),
@@ -224,7 +232,17 @@ class _LoginViewState extends State<LoginView> {
   //
   //
   //
-  Future<void> doLogin() async {
+  Future<void> doInitialLogin() async {
+    await pref.init();
+    if (pref.userId.length != 0 && pref.userPassword.length != 0) {
+      doLogin(id: pref.userId, password: pref.userPassword);
+    }
+  }
+
+  //
+  //
+  //
+  Future<void> doLogin({required String id, required String password}) async {
     if (!isRunning) {
       isRunning = true;
       setState(() {});
@@ -234,33 +252,39 @@ class _LoginViewState extends State<LoginView> {
       setState(() {});
 
       http.Response res = await http.get(
-        Uri.parse("https://gcse.doky.space/api/sign?id=$userId&pw=$userPw"),
+        Uri.parse("https://gcse.doky.space/api/sign?id=$id&pw=$password"),
       );
       var resJ = jsonDecode(res.body);
-
-      print(res);
-      print(resJ);
 
       if (resJ["success"] == true) {
         isLoginFailed = false;
         // 성공 시, 정보를 받아옴
         GlobalVariables.userName = resJ["name"].toString();
-        GlobalVariables.userDept = userDept = resJ["dept"];
-        GlobalVariables.userImg = userPhoto = resJ["photo"];
+        GlobalVariables.userDept = resJ["dept"].toString();
+        GlobalVariables.userImg = resJ["photo"].toString();
 
-        print(GlobalVariables.userImg);
+        if (userId.length != 0) pref.userId = userId;
+        if (userPw.length != 0) pref.userPassword = userPw;
+
+        modalOpacity = false;
+        setState(() {});
+        await Future.delayed(Duration(milliseconds: 500));
+
+        isRunning = false;
+        setState(() {});
 
         Navigator.pushReplacementNamed(context, "/HomeView");
+        return;
       } else {
+        modalOpacity = false;
+        setState(() {});
+        await Future.delayed(Duration(milliseconds: 500));
+
+        isRunning = false;
+        setState(() {});
+
         isLoginFailed = true;
       }
-
-      modalOpacity = false;
-      setState(() {});
-      await Future.delayed(Duration(milliseconds: 500));
-
-      isRunning = false;
-      setState(() {});
     }
   }
 }

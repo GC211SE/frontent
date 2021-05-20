@@ -1,4 +1,6 @@
 android/app/google-service*
+lib/utils/cipher.dart
+
 
 # Miscellaneous
 *.class
