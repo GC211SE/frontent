@@ -38,13 +38,13 @@ class _CellState extends State<Cell> {
 }
 
 class LectureBox extends StatefulWidget {
-  final Color cellColor;
   final Color boarderColor;
   final double height;
+  final int type;
 
   LectureBox({
+    required this.type,
     required this.height,
-    this.cellColor = Colors.blue,
     this.boarderColor = Colors.grey,
   });
 
@@ -53,15 +53,26 @@ class LectureBox extends StatefulWidget {
 }
 
 class _LectureBoxState extends State<LectureBox> {
+  late Color cellColor;
   @override
   void initState() {
     super.initState();
+    if (widget.type == 0){
+      cellColor = Colors.blue;
+    }
+    else if (widget.type == 1){
+      cellColor = Colors.deepOrangeAccent;
+    }
+    else if (widget.type == 2){
+      cellColor = Colors.teal;
+    }
   }
+
 
   @override
   Widget build(BuildContext context) => Container(
         decoration: BoxDecoration(
-          color: widget.cellColor,
+          color: cellColor,
           border: Border(
             top: BorderSide(width: 1.0, color: widget.boarderColor),
             left: BorderSide(width: 0.0, color: widget.boarderColor),

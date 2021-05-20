@@ -1,12 +1,31 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:gcrs/src/anHour.dart';
 import 'package:gcrs/src/header.dart';
 import 'package:gcrs/src/indicator.dart';
 import 'package:gcrs/src/weekly_times.dart';
-import 'package:http/http.dart' as http;
 import 'package:gcrs/views/reservationView.dart';
+
+
+class RenderSpecificSave {
+  /// 한개의 셀 단위로 쪼개줌
+  final int date;
+  final int hour;
+
+  /// time
+  final int startMinute;
+  final int endMinute;
+
+  /// type
+  final int type; // 0: lecture, 1: reservation, 2: nothing?
+
+  RenderSpecificSave({
+    required this.date,
+    required this.hour,
+    required this.startMinute,
+    required this.endMinute,
+    required this.type,
+  });
+}
 
 class WeeklyTimeTable extends StatefulWidget {
   /*** variables ***/
@@ -19,7 +38,7 @@ class WeeklyTimeTable extends StatefulWidget {
   // use language
   final String locale;
 
-  final List<Lecture> lec; // TODO: 강의 받아와서 저장 -> 요일 별 정렬 후 저장해 줍시다
+  final List<Lecture> lec;
 
   WeeklyTimeTable({
     /* set color */
@@ -49,9 +68,9 @@ class _WeeklyTimeTableState extends State<WeeklyTimeTable> {
       setState(() {
         /// TEST TODO: remove test
         // widget.lec.add(Lecture(date: "1", time: "1"));
-        // lec.add(Lecture(date: "1", time: "2"));
-        // widget.lec.add(Lecture(date: "3", time: "21"));
-        // lec.add(Lecture(date: "3", time: "22"));
+        widget.lec.add(Lecture(date: "1", time: "2"));
+        widget.lec.add(Lecture(date: "3", time: "21"));
+        widget.lec.add(Lecture(date: "3", time: "22"));
 
         locale = widget.locale;
       });
@@ -91,8 +110,8 @@ class _WeeklyTimeTableState extends State<WeeklyTimeTable> {
                     isLecture = true;
                     children.add(Column(
                       children: [
-                        LectureBox(height: 30),
-                        LectureBox(height: 30),
+                        LectureBox(height: 30, type: 1),
+                        LectureBox(height: 30, type: 2),
                       ],
                     ));
                   }
@@ -101,26 +120,6 @@ class _WeeklyTimeTableState extends State<WeeklyTimeTable> {
                   children.add(Cell());
                 }
               }
-              /*
-              for (int lectureIdx = 0; lectureIdx < lec.length; lectureIdx++){
-                if (dateIdx == int.parse(lec[lectureIdx].date)){
-                  children.add(
-                      Column(
-                        children: [
-                          LectureBox(height: 30),
-                          LectureBox(height: 30),
-                        ],
-                      )
-                  );
-                }
-                if (lectureIdx == index){
-
-                }
-                children.add(
-                  Cell(),
-                );
-              }
-              */
               return Row(children: children);
             },
           ),
@@ -130,13 +129,8 @@ class _WeeklyTimeTableState extends State<WeeklyTimeTable> {
   }
 
   loadData() async {
-    Uri dataURL =
-        Uri.parse("https://gcse.doky.space/api/schedule?bd=IT대학&crn=304");
-    http.Response response = await http.get(dataURL);
     setState(() {
-      // TODO: change 적용이 이안에 들어가야할 듯?
-      // TODO: day 순 , time 순,(?) 으로 정렬 필요 -> 나중에 정하자...
-      // widgets = json.decode(response.body);
+      // TODO: reservation받아와서 바꿈
     });
   }
 }
