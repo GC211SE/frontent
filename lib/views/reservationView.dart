@@ -10,9 +10,6 @@ import 'package:f_datetimerangepicker/f_datetimerangepicker.dart';
 
 var thisContext;
 
-// https://gcse.doky.space/api/schedule?bd=IT대학&crn=304
-// TODO: make class to save lecture
-
 class Lecture {
   final String date; // 요일
   final String time; // 시간 -> 밑에 MAP 으로 시간 알아봅시다
@@ -24,8 +21,9 @@ class Lecture {
 
   factory Lecture.fromJson(dynamic json) {
     return Lecture(
-        date: json["dotw"] as String,
-        time: json["name"] as String);
+      date: json["dotw"].toString(),
+      time: json["name"].toString(),
+    );
   }
 
   @override
@@ -33,7 +31,8 @@ class Lecture {
     return '{Lecture{date: $date}, Lecture{time: $time}}';
   }
 
-  timeCalculator(String time) { // dotw data 받아와서 시간 형식을 저장(start hour/minute, end hour/minute)
+  timeCalculator(String time) {
+    // dotw data 받아와서 시간 형식을 저장(start hour/minute, end hour/minute)
     // split nth 교시 to hour and minute
     int startHour = int.parse(convertToActualTime[time]![0].substring(0, 2));
     int startMinute = int.parse(convertToActualTime[time]![0].substring(3, 4));
@@ -54,20 +53,20 @@ class Lecture {
 
   // format = name:[start time, end time]
   static final Map<String, List<String>> convertToActualTime = {
-    '1': ["09:00", "09:50"],
-    '2': ["10:00", "10:50"],
-    '3': ["11:00", "11:50"],
-    '4': ["12:00", "12:50"],
-    '5': ["13:00", "13:50"],
-    '6': ["14:00", "14:50"],
-    '7': ["15:00", "15:50"],
-    '8': ["16:00", "16:50"],
-    '9': ["17:30", "18:20"],
-    '10': ["18:25", "19:15"],
-    '11': ["19:20", "20:10"],
-    '12': ["20:15", "21:05"],
-    '13': ["21:10", "22:00"],
-    '14': ["22:05", "22:55"],
+    '1': ["09:00", "10:00"],
+    '2': ["10:00", "11:00"],
+    '3': ["11:00", "12:00"],
+    '4': ["12:00", "13:00"],
+    '5': ["13:00", "14:00"],
+    '6': ["14:00", "15:00"],
+    '7': ["15:00", "16:00"],
+    '8': ["16:00", "17:00"],
+    '9': ["17:30", "18:25"],
+    '10': ["18:25", "19:20"],
+    '11': ["19:20", "20:15"],
+    '12': ["20:15", "21:10"],
+    '13': ["21:10", "22:05"],
+    '14': ["22:05", "23:00"],
     '21': ["09:30", "10:45"],
     '22': ["11:00", "12:15"],
     '23': ["13:00", "14:15"],
@@ -82,13 +81,14 @@ class ReservationView extends StatefulWidget {
 }
 
 class _ReservationViewState extends State<ReservationView> {
+  DateTime startTime = DateTime.now();
+  DateTime endTime = DateTime.now();
   var data;
   List<Lecture> lecture = [];
   // 임의 값
   String userid = "aaaa";
   String bd = "IT대학";
   String crn = "304";
-
 
   Future<String> getData() async {
     http.Response res = await http.get(Uri.parse(
@@ -111,8 +111,6 @@ class _ReservationViewState extends State<ReservationView> {
     lecture.add(Lecture(date: "3", time: "21"));
   }
 
-  DateTime startTime = DateTime.now();
-  DateTime endTime = DateTime.now();
   TextEditingController startControl = TextEditingController();
   TextEditingController endControl = TextEditingController();
   @override
@@ -130,10 +128,21 @@ class _ReservationViewState extends State<ReservationView> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Expanded(
-              child: WeeklyTimeTable(
-                locale: 'ko',
-              ),
-              flex: 2),
+            child: WeeklyTimeTable(
+              startTime: startTime,
+              endTime: endTime,
+              locale: 'ko',
+              lec: lecture,
+            ),
+            flex: 2,
+          ),
+          ElevatedButton(
+            onPressed: () {
+              lecture.add(Lecture(date: "1", time: "1"));
+              setState(() {});
+            },
+            child: Text("Test to add lecture"),
+          ),
           Expanded(
             child: new Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -160,9 +169,9 @@ class _ReservationViewState extends State<ReservationView> {
                                   // 지금 시간에서 1시간 이후부터 예약가능
                                   initialStartTime:
                                       DateTime.now().add(Duration(hours: 1)),
-                                  // 끝나는 시각은 2시간 이후
+                                  // 끝나는 시각은 1시간 이후
                                   initialEndTime:
-                                      DateTime.now().add(Duration(hours: 2)),
+                                      DateTime.now().add(Duration(hours: 1)),
                                   mode: DateTimeRangePickerMode.dateAndTime,
                                   minimumTime: DateTime.now()
                                       .subtract(Duration(days: 5)),
@@ -204,6 +213,7 @@ class _ReservationViewState extends State<ReservationView> {
                       })
                 ]),
           ),
+
           /***  ***/
         ],
       )),
@@ -229,7 +239,9 @@ class _ReservationViewState extends State<ReservationView> {
       ),
     );
   }
-  void _showDialog() { // 예약 불가
+
+  void _showDialog() {
+    // 예약 불가
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -250,8 +262,8 @@ class _ReservationViewState extends State<ReservationView> {
     );
   }
 
-
-  showAlertDialog(BuildContext context) { // reserve button
+  showAlertDialog(BuildContext context) {
+    // reserve button
     // set up the buttons
     Widget cancelButton = ElevatedButton(
       child: Text("Cancel"),
@@ -261,83 +273,83 @@ class _ReservationViewState extends State<ReservationView> {
       },
     );
     Widget continueButton = ElevatedButton(
-      child: Text("Continue"),
-      onPressed: () async {
-        int startDay = startTime.weekday;
-        int endDay = endTime.weekday;
-        int startH = startTime.hour;
-        int startM = startTime.minute;
-        int endH = endTime.hour;
-        int endM = endTime.minute;
-        
-        if(startDay != endDay){ // 이틀 이상 예약 불가
-          _showDialog();
-          return;
-        }
+        child: Text("Continue"),
+        onPressed: () async {
+          int startDay = startTime.weekday;
+          int endDay = endTime.weekday;
+          int startH = startTime.hour;
+          int startM = startTime.minute;
+          int endH = endTime.hour;
+          int endM = endTime.minute;
 
-        for (Lecture lec in lecture) {
-          if (startDay.toString() == lec.date) { // 선택한 요일에 강의가 있으면
-            List<int> hourSplit = lec.timeCalculator(lec.time);
+          if (startDay != endDay) {
+            // 이틀 이상 예약 불가
+            _showDialog();
+            return;
+          }
 
-            if (startH >= hourSplit[0] &&
-                startH <= hourSplit[2]) { // 시작 시간이 강의시간과 겹치면
-              if (startH == hourSplit[0] && startM >= hourSplit[1]) {
-                // 예약 불가
-                _showDialog();
-                return;
-              }
-              else if (startH == hourSplit[2] && startM <= hourSplit[3]) {
-                // 예약 불가
-                _showDialog();
-                return;
-              }
-            }
-            else if (endH >= hourSplit[0] &&
-                endH <= hourSplit[2]) { // 끝나는 시간이 강의시간과 겹치면
-              if (endH == hourSplit[0] && endM >= hourSplit[1]) {
-                // 예약 불가
-                _showDialog();
-                return;
-              }
-              else if (endH == hourSplit[2] && endM <= hourSplit[3]) {
-                // 예약 불가
-                _showDialog();
-                return;
-              }
-            }
-            else if (startH <= hourSplit[0] && // 예약시간 안에 강의가 있으면
-                endH >= hourSplit[2]){
-              if(startM <= hourSplit[1] && endM >= hourSplit[3]) {
-                // 예약 불가
-                _showDialog();
-                return;
+          for (Lecture lec in lecture) {
+            if (startDay.toString() == lec.date) {
+              // 선택한 요일에 강의가 있으면
+              List<int> hourSplit = lec.timeCalculator(lec.time);
+
+              if (startH >= hourSplit[0] && startH <= hourSplit[2]) {
+                // 시작 시간이 강의시간과 겹치면
+                if (startH == hourSplit[0] && startM >= hourSplit[1]) {
+                  // 예약 불가
+                  _showDialog();
+                  return;
+                } else if (startH == hourSplit[2] && startM <= hourSplit[3]) {
+                  // 예약 불가
+                  _showDialog();
+                  return;
+                }
+              } else if (endH >= hourSplit[0] && endH <= hourSplit[2]) {
+                // 끝나는 시간이 강의시간과 겹치면
+                if (endH == hourSplit[0] && endM >= hourSplit[1]) {
+                  // 예약 불가
+                  _showDialog();
+                  return;
+                } else if (endH == hourSplit[2] && endM <= hourSplit[3]) {
+                  // 예약 불가
+                  _showDialog();
+                  return;
+                }
+              } else if (startH <= hourSplit[0] && // 예약시간 안에 강의가 있으면
+                  endH >= hourSplit[2]) {
+                if (startM <= hourSplit[1] && endM >= hourSplit[3]) {
+                  // 예약 불가
+                  _showDialog();
+                  return;
+                }
               }
             }
           }
-        }
-        http.Response res = await http.post(Uri.parse( // reservation API
-            "https://gcse.doky.space/api/reservation"),
-            body: {"userid": userid,
-              "start": startTime,
-              "end": endTime,
-              "bd": bd,
-              "crn": crn,
-              "fb_key": ""});
+          http.Response res = await http.post(Uri.parse(// reservation API
+              "https://gcse.doky.space/api/reservation"), body: {
+            "userid": userid,
+            "start": startTime,
+            "end": endTime,
+            "bd": bd,
+            "crn": crn,
+            "fb_key": ""
+          });
 
-        var resJ = jsonDecode(res.body);
+          var resJ = jsonDecode(res.body);
 
-        if (resJ["success"] == true)  // 예약 성공
-          Navigator.pushNamed(context, "/HomeView"); // homeView로
-        else // 예약 실패
-          _showDialog();
-      }
-    );
+          if (resJ["success"] == true) // 예약 성공
+            Navigator.pushNamed(context, "/HomeView"); // homeView로
+          else // 예약 실패
+            _showDialog();
+        });
 
     // set up the AlertDialog
     AlertDialog alert = AlertDialog(
       title: Text(""),
       content: Text(
-          bd+" "+crn+
+          bd +
+              " " +
+              crn +
               "\n" +
               startTime.hour.toString() +
               ":" +
@@ -362,6 +374,4 @@ class _ReservationViewState extends State<ReservationView> {
       },
     );
   }
-
-
 }

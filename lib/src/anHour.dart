@@ -31,20 +31,20 @@ class _CellState extends State<Cell> {
             right: BorderSide(width: 0.0, color: widget.boarderColor),
           ),
         ),
-        height: 60,
+        height: 60 *4/5,
       ),
     );
   }
 }
 
 class LectureBox extends StatefulWidget {
-  final Color cellColor;
   final Color boarderColor;
   final double height;
+  final int type;
 
   LectureBox({
+    required this.type,
     required this.height,
-    this.cellColor = Colors.blue,
     this.boarderColor = Colors.grey,
   });
 
@@ -53,22 +53,34 @@ class LectureBox extends StatefulWidget {
 }
 
 class _LectureBoxState extends State<LectureBox> {
+  late Color cellColor;
   @override
   void initState() {
     super.initState();
+    /*** 0: lecture, 1: reservation, 2: nothing? ***/
+    if (widget.type == 0){
+      cellColor = Colors.blue;
+    }
+    else if (widget.type == 1){
+      cellColor = Colors.deepOrangeAccent;
+    }
+    else if (widget.type == 2){
+      cellColor = Colors.white;
+    }
   }
+
 
   @override
   Widget build(BuildContext context) => Container(
         decoration: BoxDecoration(
-          color: widget.cellColor,
+          color: cellColor,
           border: Border(
             top: BorderSide(width: 1.0, color: widget.boarderColor),
             left: BorderSide(width: 0.0, color: widget.boarderColor),
             right: BorderSide(width: 0.0, color: widget.boarderColor),
           ),
         ),
-        height: widget.height,
+        height: widget.height *4/5,
         width: MediaQuery.of(context).size.width / 8, // 디바이스 넓이 / 8
       );
 }
