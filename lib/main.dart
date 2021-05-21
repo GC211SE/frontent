@@ -21,7 +21,7 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: LoginView(),
+      home: HomeView(),
       routes: {
         "/LoginView": (_) => LoginView(),
         "/HomeView": (_) => HomeView(),
@@ -29,6 +29,8 @@ class _MyAppState extends State<MyApp> {
         "/ReservationView": (_) => ReservationView(),
         "/StatusView": (_) => StatusView(),
         "/CheckinView": (_) => CheckinView(),
+        "/Search": (_) => SearchView(),
+        "/Search2": (_) => SearchView2(),
       },
       theme: ThemeData(fontFamily: "Nanum"),
     );

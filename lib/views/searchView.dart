@@ -1,10 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:gcrs/utils/GlobalVariables.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:async';
 import 'package:gcrs/views/searchView2.dart';
-import 'package:get/get.dart';
 
 class SearchView extends StatefulWidget {
   @override
@@ -54,19 +54,35 @@ class _SearchViewState extends State<SearchView> {
           ),
         ),
       ),
-      body: new ListView.builder(
-        physics: BouncingScrollPhysics(),
-        itemCount: data == null ? 0 : data.length,
-        itemBuilder: (BuildContext context, int index) {
-          return new Card(
-            child: ListTile(
-                onTap: () {
-                  Get.to(() => SearchView2(), arguments: data[index]);
-                },
-                title: Text(data[index])),
-          );
-        },
-      ),
+      body: MediaQuery.of(context).size.width > GlobalVariables.mobileWidth
+          ? Row(
+              children: [
+                Expanded(child: Container()),
+                Expanded(flex: 2, child: lists()),
+                Expanded(child: Container()),
+              ],
+            )
+          : Padding(
+              padding: EdgeInsets.fromLTRB(30, 0, 30, 0),
+              child: lists(),
+            ),
+    );
+  }
+
+  Widget lists() {
+    return ListView.builder(
+      physics: BouncingScrollPhysics(),
+      itemCount: data == null ? 0 : data.length,
+      itemBuilder: (BuildContext context, int index) {
+        return new Card(
+          child: ListTile(
+              onTap: () {
+                GlobalVariables.building = data[index];
+                Navigator.pushNamed(context, "/Search2");
+              },
+              title: Text(data[index])),
+        );
+      },
     );
   }
 }

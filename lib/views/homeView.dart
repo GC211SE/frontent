@@ -161,17 +161,19 @@ class _HomeViewState extends State<HomeView> {
     return Container(
       child: Row(
         children: [
-          Card(
-            elevation: 2.5,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(37),
-            ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(37),
-              child: Image.network(
-                GlobalVariables.userImg,
-                width: 37,
-                height: 37,
+          Container(
+            width: 50,
+            height: 50,
+            child: Card(
+              elevation: 2.5,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(37),
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(37),
+                child: Image.network(
+                  GlobalVariables.userImg,
+                ),
               ),
             ),
           ),
@@ -290,23 +292,21 @@ class _HomeViewState extends State<HomeView> {
   // Setting button
   Widget setting() {
     return Container(
+      width: 50,
+      height: 50,
       child: Card(
         elevation: 2.5,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(37),
         ),
-        child: Container(
-          width: 37,
-          height: 37,
-          child: CupertinoButton(
-            padding: EdgeInsets.all(0),
-            child: Icon(
-              Icons.settings,
-              color: Colors.grey.shade700,
-              size: 20,
-            ),
-            onPressed: () => Navigator.pushNamed(context, "/SettingView"),
+        child: CupertinoButton(
+          padding: EdgeInsets.all(0),
+          child: Icon(
+            Icons.settings,
+            color: Colors.grey.shade700,
+            size: 20,
           ),
+          onPressed: () => Navigator.pushNamed(context, "/SettingView"),
         ),
       ),
     );
@@ -352,7 +352,7 @@ class _HomeViewState extends State<HomeView> {
       padding: EdgeInsets.all(0),
       color: Colors.blue.shade900,
       child: Text("예약하기"),
-      onPressed: () => {},
+      onPressed: () => Navigator.pushNamed(context, "/Search"),
     );
   }
 }
