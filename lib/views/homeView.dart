@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gcrs/utils/GlobalVariables.dart';
@@ -36,6 +35,7 @@ class _HomeViewState extends State<HomeView> {
         backgroundColor: Color.fromRGBO(250, 250, 250, 1),
         elevation: 0,
         toolbarHeight: 30,
+        backwardsCompatibility: false,
       ),
       backgroundColor: Color.fromRGBO(250, 250, 250, 1),
       body: MediaQuery.of(context).size.width > GlobalVariables.mobileWidth
@@ -54,7 +54,7 @@ class _HomeViewState extends State<HomeView> {
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
                               Container(
-                                width: 110,
+                                width: 140,
                                 height: 37,
                                 child: reservationBtn(),
                               ),
@@ -176,6 +176,10 @@ class _HomeViewState extends State<HomeView> {
                 borderRadius: BorderRadius.circular(37),
                 child: Image.network(
                   GlobalVariables.userImg,
+                  errorBuilder: (context, error, stackTrace) => Icon(
+                    Icons.data_usage_rounded,
+                    color: Colors.grey,
+                  ),
                 ),
               ),
             ),
@@ -290,80 +294,76 @@ class _HomeViewState extends State<HomeView> {
                                       height: 100,
                                       padding:
                                           EdgeInsets.fromLTRB(7, 7, 3.5, 7),
-                                      child: Expanded(
-                                        child: CupertinoButton(
-                                          color: item.enable == 0
-                                              ? Colors.blue
-                                              : Colors.blue.shade900,
-                                          disabledColor: Colors.grey.shade300,
-                                          padding: EdgeInsets.all(0),
-                                          child: Text(
-                                              item.enable == 0 ? "입장" : "보기"),
-                                          onPressed: item.enable == 0 && isUsing
-                                              ? null
-                                              : item.enable == 0
-                                                  ? () {
-                                                      // Check entrace time is smaller than current time + 10 minute
-                                                      DateTime before =
-                                                          DateTime.now()
-                                                              .toUtc()
-                                                              .add(Duration(
-                                                                  hours: 9,
-                                                                  minutes: 10));
-                                                      // Check entrace time is bigger than current time - 10 minute
-                                                      DateTime after =
-                                                          DateTime.now()
-                                                              .toUtc()
-                                                              .add(Duration(
-                                                                  hours: 8,
-                                                                  minutes: 50));
+                                      child: CupertinoButton(
+                                        color: item.enable == 0
+                                            ? Colors.blue
+                                            : Colors.blue.shade900,
+                                        disabledColor: Colors.grey.shade300,
+                                        padding: EdgeInsets.all(0),
+                                        child: Text(
+                                            item.enable == 0 ? "입장" : "보기"),
+                                        onPressed: item.enable == 0 && isUsing
+                                            ? null
+                                            : item.enable == 0
+                                                ? () {
+                                                    // Check entrace time is smaller than current time + 10 minute
+                                                    DateTime before =
+                                                        DateTime.now()
+                                                            .toUtc()
+                                                            .add(Duration(
+                                                                hours: 9,
+                                                                minutes: 10));
+                                                    // Check entrace time is bigger than current time - 10 minute
+                                                    DateTime after =
+                                                        DateTime.now()
+                                                            .toUtc()
+                                                            .add(Duration(
+                                                                hours: 8,
+                                                                minutes: 50));
 
-                                                      if (before.isAfter(
-                                                              item.startTime) &&
-                                                          after.isBefore(
-                                                              item.startTime)) {
-                                                        GlobalVariables
-                                                                .recentBuilding =
-                                                            item.building;
-                                                        GlobalVariables
-                                                                .recentClassroom =
-                                                            item.classroom;
-                                                        GlobalVariables
-                                                                .recentIdx =
-                                                            item.idx;
+                                                    if (before.isAfter(
+                                                            item.startTime) &&
+                                                        after.isBefore(
+                                                            item.startTime)) {
+                                                      GlobalVariables
+                                                              .recentBuilding =
+                                                          item.building;
+                                                      GlobalVariables
+                                                              .recentClassroom =
+                                                          item.classroom;
+                                                      GlobalVariables
+                                                          .recentIdx = item.idx;
 
-                                                        Navigator.pushNamed(
-                                                                context,
-                                                                "/Checkin")
-                                                            .then((value) =>
-                                                                setState(() {
-                                                                  getData();
-                                                                }));
-                                                      } else {
-                                                        beforeCheckinAlert(
-                                                            context);
-                                                      }
-                                                    }
-                                                  : () {
                                                       Navigator.pushNamed(
                                                               context,
-                                                              "/Status")
+                                                              "/Checkin")
                                                           .then((value) =>
                                                               setState(() {
                                                                 getData();
                                                               }));
-                                                    },
-                                        ),
+                                                    } else {
+                                                      beforeCheckinAlert(
+                                                          context);
+                                                    }
+                                                  }
+                                                : () {
+                                                    Navigator.pushNamed(
+                                                            context, "/Status")
+                                                        .then((value) =>
+                                                            setState(() {
+                                                              getData();
+                                                            }));
+                                                  },
                                       ),
                                     ),
                                   ),
-                                  Expanded(
-                                    flex: 15,
-                                    child: Container(
-                                      height: 100,
-                                      padding:
-                                          EdgeInsets.fromLTRB(3.5, 7, 7, 7),
-                                      child: Expanded(
+                                  if (!isUsing)
+                                    Expanded(
+                                      flex: 15,
+                                      child: Container(
+                                        height: 100,
+                                        padding:
+                                            EdgeInsets.fromLTRB(3.5, 7, 7, 7),
                                         child: CupertinoButton(
                                           color: Colors.red.shade300,
                                           padding: EdgeInsets.all(0),
@@ -437,7 +437,6 @@ class _HomeViewState extends State<HomeView> {
                                         ),
                                       ),
                                     ),
-                                  ),
                                 ],
                               ),
                             ),
@@ -577,25 +576,23 @@ class _HomeViewState extends State<HomeView> {
                                       child: Container(
                                         height: 100,
                                         padding: EdgeInsets.all(7),
-                                        child: Expanded(
-                                          child: CupertinoButton(
-                                            color: Colors.lightGreen,
-                                            padding: EdgeInsets.all(0),
-                                            child: Text("예약"),
-                                            onPressed: () {
-                                              GlobalVariables.recentBuilding =
-                                                  item.building;
-                                              GlobalVariables.recentClassroom =
-                                                  item.classroom;
-                                              GlobalVariables.recentIdx = -1;
+                                        child: CupertinoButton(
+                                          color: Colors.lightGreen,
+                                          padding: EdgeInsets.all(0),
+                                          child: Text("예약"),
+                                          onPressed: () {
+                                            GlobalVariables.recentBuilding =
+                                                item.building;
+                                            GlobalVariables.recentClassroom =
+                                                item.classroom;
+                                            GlobalVariables.recentIdx = -1;
 
-                                              Navigator.pushNamed(context,
-                                                      "/ReservationView")
-                                                  .then((value) => setState(() {
-                                                        getData();
-                                                      }));
-                                            },
-                                          ),
+                                            Navigator.pushNamed(
+                                                    context, "/ReservationView")
+                                                .then((value) => setState(() {
+                                                      getData();
+                                                    }));
+                                          },
                                         ),
                                       ),
                                     ),

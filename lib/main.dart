@@ -8,8 +8,10 @@ import 'package:gcrs/views/searchView.dart';
 import 'package:gcrs/views/searchView2.dart';
 import 'package:gcrs/views/settingView.dart';
 import 'package:gcrs/views/statusView.dart';
+import 'package:url_strategy/url_strategy.dart';
 
 void main() {
+  setPathUrlStrategy();
   runApp(MyApp());
 }
 

@@ -439,7 +439,13 @@ class _ReservationViewState extends State<ReservationView> {
     required String building,
     required String classroom,
   }) async {
-    String? appToken = await FirebaseMessaging.instance.getToken();
+    String? appToken;
+    try {
+      appToken = await FirebaseMessaging.instance.getToken();
+    } catch (err) {
+      appToken = "-";
+    }
+    print(appToken);
 
     http.Response res = await http
         .post(Uri.parse("https://gcse.doky.space/api/reservation"), body: {
