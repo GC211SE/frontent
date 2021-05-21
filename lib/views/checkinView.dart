@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:gcrs/utils/GlobalVariables.dart';
 import 'package:gcrs/utils/SharedPreferences.dart';
 import 'package:http/http.dart' as http;
 
@@ -55,7 +56,7 @@ class _CheckinViewState extends State<CheckinView> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                SizedBox(height: MediaQuery.of(context).size.height / 4),
+                SizedBox(height: MediaQuery.of(context).size.height / 5),
                 Text(
                   "IT대학 - 304",
                   style: TextStyle(
@@ -574,7 +575,7 @@ class _CheckinViewState extends State<CheckinView> {
     http.Response res = await http.patch(
       Uri.parse("https://gcse.doky.space/api/reservation/checkin"),
       body: {
-        "idx": "97",
+        "idx": GlobalVariables.recentIdx.toString(),
         "userid": pref.userId,
       },
     );

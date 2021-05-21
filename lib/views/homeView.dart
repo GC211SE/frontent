@@ -260,7 +260,7 @@ class _HomeViewState extends State<HomeView> {
                                             MainAxisAlignment.center,
                                         children: [
                                           Text(
-                                            item.classroom,
+                                            "${item.building} - ${item.classroom}",
                                             style: TextStyle(
                                               fontSize: 20,
                                               fontWeight: FontWeight.w800,
@@ -303,13 +303,46 @@ class _HomeViewState extends State<HomeView> {
                                               ? null
                                               : item.enable == 0
                                                   ? () {
-                                                      Navigator.pushNamed(
-                                                              context,
-                                                              "/Checkin")
-                                                          .then((value) =>
-                                                              setState(() {
-                                                                getData();
-                                                              }));
+                                                      // Check entrace time is smaller than current time + 10 minute
+                                                      DateTime before =
+                                                          DateTime.now()
+                                                              .toUtc()
+                                                              .add(Duration(
+                                                                  hours: 9,
+                                                                  minutes: 10));
+                                                      // Check entrace time is bigger than current time - 10 minute
+                                                      DateTime after =
+                                                          DateTime.now()
+                                                              .toUtc()
+                                                              .add(Duration(
+                                                                  hours: 8,
+                                                                  minutes: 50));
+
+                                                      if (before.isAfter(
+                                                              item.startTime) &&
+                                                          after.isBefore(
+                                                              item.startTime)) {
+                                                        GlobalVariables
+                                                                .recentBuilding =
+                                                            item.building;
+                                                        GlobalVariables
+                                                                .recentClassroom =
+                                                            item.classroom;
+                                                        GlobalVariables
+                                                                .recentIdx =
+                                                            item.idx;
+
+                                                        Navigator.pushNamed(
+                                                                context,
+                                                                "/Checkin")
+                                                            .then((value) =>
+                                                                setState(() {
+                                                                  getData();
+                                                                }));
+                                                      } else {
+                                                        beforeCheckinAlert(
+                                                            context);
+                                                      }
                                                     }
                                                   : () {
                                                       Navigator.pushNamed(
@@ -522,7 +555,7 @@ class _HomeViewState extends State<HomeView> {
                                               MainAxisAlignment.center,
                                           children: [
                                             Text(
-                                              item.classroom,
+                                              "${item.building} - ${item.classroom}",
                                               style: TextStyle(
                                                 fontSize: 20,
                                                 fontWeight: FontWeight.w800,
@@ -550,8 +583,14 @@ class _HomeViewState extends State<HomeView> {
                                             padding: EdgeInsets.all(0),
                                             child: Text("예약"),
                                             onPressed: () {
-                                              Navigator.pushNamed(
-                                                      context, "/Checkin")
+                                              GlobalVariables.recentBuilding =
+                                                  item.building;
+                                              GlobalVariables.recentClassroom =
+                                                  item.classroom;
+                                              GlobalVariables.recentIdx = -1;
+
+                                              Navigator.pushNamed(context,
+                                                      "/ReservationView")
                                                   .then((value) => setState(() {
                                                         getData();
                                                       }));
@@ -596,11 +635,44 @@ class _HomeViewState extends State<HomeView> {
     return CupertinoButton(
       padding: EdgeInsets.all(0),
       color: Colors.blue.shade900,
-      child: Text("예약하기"),
+      child: Text("강의실 예약하기"),
       onPressed: () =>
           Navigator.pushNamed(context, "/Search").then((value) => setState(() {
                 getData();
               })),
+    );
+  }
+
+  void beforeCheckinAlert(context) async {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Column(
+          children: <Widget>[
+            new Text(
+              "입실 기능시간이 아닙니다.",
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+        actions: <Widget>[
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Expanded(
+                child: CupertinoButton(
+                  color: Colors.blue.shade800,
+                  padding: EdgeInsets.all(0),
+                  child: Text("확인"),
+                  onPressed: () async {
+                    Navigator.pop(context);
+                  },
+                ),
+              ),
+            ],
+          )
+        ],
+      ),
     );
   }
 
@@ -645,9 +717,11 @@ class _HomeViewState extends State<HomeView> {
           enable: 1,
           start: formatter1.format(DateTime.parse(i['start'])),
           end: formatter2.format(DateTime.parse(i['end'])),
-          classroom: i['building'] + "-" + i['classroom'],
+          building: i['building'],
+          classroom: i['classroom'],
           reservedNum: resNumber['reserved'],
           currentNum: resNumber['using'],
+          startTime: DateTime.parse(i['start']),
         );
         reservationWidgetDatas.add(item);
       }
@@ -671,9 +745,11 @@ class _HomeViewState extends State<HomeView> {
           enable: 0,
           start: formatter1.format(DateTime.parse(i['start'])),
           end: formatter2.format(DateTime.parse(i['end'])),
-          classroom: i['building'] + "-" + i['classroom'],
+          building: i['building'],
+          classroom: i['classroom'],
           reservedNum: resNumber['reserved'],
           currentNum: resNumber['using'],
+          startTime: DateTime.parse(i['start']),
         );
         reservationWidgetDatas.add(item);
       }
@@ -696,9 +772,11 @@ class _HomeViewState extends State<HomeView> {
 
       var starred = ReservationWidgetData(
         enable: -1,
-        classroom: "$building - $classroom",
+        building: building,
+        classroom: classroom,
         reservedNum: resNumber['reserved'],
         currentNum: resNumber['using'],
+        startTime: DateTime.now(), // Dummy
       );
       starredWidgetDatas.add(starred);
     }
@@ -712,17 +790,21 @@ class _HomeViewState extends State<HomeView> {
 
 class ReservationWidgetData {
   final int idx;
+  final DateTime startTime;
   final String start;
   final String end;
+  final String building;
   final String classroom;
   final int currentNum;
   final int reservedNum;
   final int enable;
 
   ReservationWidgetData({
+    required this.startTime,
     this.idx = -1,
     this.start = "",
     this.end = "",
+    required this.building,
     required this.classroom,
     this.currentNum = 0,
     this.reservedNum = 0,

@@ -1,10 +1,13 @@
 import 'dart:convert';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:gcrs/Widget/timetable.dart';
 import 'package:gcrs/utils/GlobalVariables.dart';
+import 'package:gcrs/utils/SharedPreferences.dart';
 import 'package:http/http.dart' as http;
-import 'package:f_datetimerangepicker/f_datetimerangepicker.dart';
+import 'package:intl/intl.dart';
 
 var thisContext;
 int count = 0;
@@ -61,19 +64,23 @@ class ReservationView extends StatefulWidget {
 
 class _ReservationViewState extends State<ReservationView> {
   DateTime startTime = DateTime.now();
-  DateTime endTime = DateTime.now();
+  DateTime endTime = DateTime.now().add(Duration(minutes: 30));
   var data;
   List<Lecture> lecture = [];
-  String bd = "IT대학";
-  String crn = "304";
+
+  PreferencesManager pref = PreferencesManager.instance;
+  DateFormat formatter = DateFormat("M월 d일  H:mm");
+  DateFormat formatterHour = DateFormat("H:mm");
+  DateFormat formatterHttp = DateFormat("yyyy-MM-dd H:mm");
+
+  int targetReserved = -1;
 
   Future<String> getData() async {
     http.Response res = await http.get(Uri.parse(
-        "https://gcse.doky.space/api/schedule?bd=" + bd + "&crn=" + crn));
+        "https://gcse.doky.space/api/schedule?bd=${GlobalVariables.recentBuilding}&crn=${GlobalVariables.recentClassroom}"));
     this.setState(() {
       data = jsonDecode(res.body)["result"];
       data.forEach((element) {
-        count++;
         lecture.add(Lecture.fromJson(element));
       });
     });
@@ -94,163 +101,325 @@ class _ReservationViewState extends State<ReservationView> {
     thisContext = context;
     return Scaffold(
       appBar: AppBar(
-        title: Text('예약'),
+        backgroundColor: Color.fromRGBO(250, 250, 250, 1),
+        elevation: 0,
+        toolbarHeight: 90,
+        centerTitle: true,
+        leading: CupertinoButton(
+          child: Icon(
+            CupertinoIcons.back,
+            color: Colors.black,
+          ),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: Text(
+          "예약하기",
+          style: TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.w800,
+          ),
+        ),
       ),
 
       /*** timetable ***/
       body: Container(
-          child: Column(
-        mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Expanded(
-            child: WeeklyTimeTable(
-              startTime: startTime,
-              endTime: endTime,
-              locale: 'ko',
-              lec: lecture,
-            ),
-            flex: 2,
-          ),
-          ElevatedButton(
-            onPressed: () {
-              lecture.add(Lecture(date: "1", time: "1"));
-              setState(() {});
-            },
-            child: Text("Test to add lecture"),
-          ),
-          Expanded(
-            child: new Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
+        child: Column(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Expanded(
+              flex: 4,
+              child: Column(
                 children: [
-                  Container(
-                    margin: EdgeInsets.only(bottom: 40.0, top: 10.0),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Container(
-                          margin: EdgeInsets.only(bottom: 10.0),
-                          child: ElevatedButton(
-                            child: Text(
-                              "Select Time",
-                              style: new TextStyle(fontSize: 20),
-                            ),
-                            onPressed: () {
-                              DateTimeRangePicker(
-                                  startText: "From",
-                                  endText: "To",
-                                  doneText: "Yes",
-                                  cancelText: "Cancel",
-                                  interval: 5,
-                                  // 지금 시간에서 1시간 이후부터 예약가능
-                                  initialStartTime:
-                                      DateTime.now().add(Duration(hours: 1)),
-                                  // 끝나는 시각은 1시간 이후
-                                  initialEndTime:
-                                      DateTime.now().add(Duration(hours: 1)),
-                                  mode: DateTimeRangePickerMode.dateAndTime,
-                                  minimumTime: DateTime.now()
-                                      .subtract(Duration(days: 5)),
-                                  maximumTime:
-                                      DateTime.now().add(Duration(days: 25)),
-                                  use24hFormat: true,
-                                  onConfirm: (start, end) {
-                                    setState(() {
-                                      startTime = start;
-                                      endTime = end;
-                                    });
-                                  }).showPicker(context);
-                            },
-                          ),
-                        ),
-                        Text(
-                            // 시작 시간 표시 (처음 실행때는 현재시각)
-                            'Start Time : ' +
-                                startTime.hour.toString() +
-                                ":" +
-                                startTime.minute.toString(),
-                            style: TextStyle(fontSize: 20.0)),
-                        Text(
-                            // 종료 시간 표시 (처음 실행때는 현재시각)
-                            'end Time : ' +
-                                endTime.hour.toString() +
-                                ":" +
-                                endTime.minute.toString(),
-                            style: TextStyle(fontSize: 20.0))
-                      ],
+                  Expanded(
+                    child: WeeklyTimeTable(
+                      startTime: startTime,
+                      endTime: endTime,
+                      locale: 'ko',
+                      lec: lecture,
                     ),
                   ),
-                  ElevatedButton(
-                      // 예약
-                      child:
-                          Text("Reserve", style: new TextStyle(fontSize: 20)),
-                      onPressed: () {
-                        showAlertDialog(context);
-                      })
-                ]),
-          ),
+                  Divider(
+                    thickness: 1.2,
+                    height: 1.2,
+                  ),
+                ],
+              ),
+            ),
+            Expanded(
+              flex: 3,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(30, 10, 30, 10),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      height: 35,
+                      child: Row(
+                        children: [
+                          Expanded(
+                            flex: 27,
+                            child: Text(
+                              "시작시간",
+                              style: TextStyle(
+                                fontWeight: FontWeight.w800,
+                                fontSize: 18,
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            flex: 53,
+                            child: Text(
+                              formatter.format(startTime),
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 18,
+                                color: Colors.blue.shade900,
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            flex: 20,
+                            child: CupertinoButton(
+                              color: Colors.blue.shade900,
+                              padding: EdgeInsets.all(0),
+                              onPressed: () {
+                                DatePicker.showDateTimePicker(
+                                  context,
+                                  locale: LocaleType.ko,
+                                  minTime: DateTime.now(),
+                                  currentTime: startTime,
+                                  maxTime:
+                                      DateTime.now().add(Duration(days: 7)),
+                                  onConfirm: (dateTime) async {
+                                    startTime = dateTime;
+                                    endTime =
+                                        dateTime.add(Duration(minutes: 30));
 
-          /***  ***/
-        ],
-      )),
-      floatingActionButton: Stack(
-        children: <Widget>[
-          /*** This will be removed (TEST) ***/
-          Padding(
-            padding: EdgeInsets.only(),
-            child: Align(
-              alignment: Alignment.bottomRight,
-              child: FloatingActionButton(
-                heroTag: "btn2",
-                onPressed: () => Navigator.pushNamed(context, "/SettingView"),
-                child: Text(
-                  "Setting\nView",
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 10),
+                                    var resNum = await http.get(Uri.parse(
+                                        "https://gcse.doky.space/api/reservation/targettotal?bd=${GlobalVariables.recentBuilding}&crn=${GlobalVariables.recentClassroom}&time=${formatterHttp.format(startTime)}"));
+
+                                    print(resNum.body);
+
+                                    var resNumber =
+                                        jsonDecode(resNum.body)['success'];
+
+                                    targetReserved = resNumber['reserved'];
+
+                                    setState(() {});
+                                  },
+                                );
+                              },
+                              child: Text("선택"),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    ///
+                    ///
+                    SizedBox(height: 15),
+                    Divider(height: 1, thickness: 1),
+                    SizedBox(height: 15),
+
+                    ///
+                    ///
+                    Container(
+                      height: 35,
+                      child: Row(
+                        children: [
+                          Expanded(
+                            flex: 27,
+                            child: Text(
+                              "종료시간",
+                              style: TextStyle(
+                                fontWeight: FontWeight.w800,
+                                fontSize: 18,
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            flex: 53,
+                            child: Text(
+                              formatter.format(endTime),
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 18,
+                                color: Colors.blue.shade900,
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            flex: 20,
+                            child: CupertinoButton(
+                              color: Colors.blue.shade900,
+                              padding: EdgeInsets.all(0),
+                              onPressed: () {
+                                DatePicker.showDateTimePicker(
+                                  context,
+                                  locale: LocaleType.ko,
+                                  currentTime: endTime,
+                                  minTime: startTime.add(Duration(minutes: 30)),
+                                  maxTime:
+                                      DateTime.now().add(Duration(days: 7)),
+                                  onConfirm: (dateTime) async {
+                                    endTime = dateTime;
+                                    setState(() {});
+                                  },
+                                );
+                              },
+                              child: Text("선택"),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    ///
+                    ///
+                    SizedBox(height: 5),
+
+                    ///
+                    ///
+                    targetReserved != -1
+                        ? Container(
+                            height: 30,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Expanded(
+                                  flex: 27,
+                                  child: Text(
+                                    "해당 시간 $targetReserved명 예약",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w800,
+                                      fontSize: 15,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )
+                        : SizedBox(
+                            height: 30,
+                          ),
+
+                    ///
+                    ///
+                    SizedBox(height: 10),
+
+                    ///
+                    ///
+
+                    Container(
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: CupertinoButton(
+                              color: Colors.blue.shade900,
+                              padding: EdgeInsets.all(0),
+                              onPressed: () {
+                                showAlertDialog(context);
+                              },
+                              child: Text("예약하기"),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: 20),
+                  ],
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 
   showAlertDialog(BuildContext context) {
-    // set up the buttons
-    Widget cancelButton = ElevatedButton(
-      child: Text("Cancel"),
-      onPressed: () {
-        // 이전 화면으로
-        Navigator.pop(context);
-      },
-    );
-    Widget continueButton = ElevatedButton(
-      child: Text("Continue"),
-      onPressed: () {
-        // 예약
-      },
-    );
-
     // set up the AlertDialog
     AlertDialog alert = AlertDialog(
-      title: Text(""),
-      // 강의실 받아온거 추가해야함
-      content: Text(
-          count.toString() +
-              "\n" +
-              startTime.hour.toString() +
-              ":" +
-              startTime.minute.toString() +
-              " ~ " +
-              endTime.hour.toString() +
-              ":" +
-              endTime.minute.toString() +
-              "\nwould you like to continue?",
-          textAlign: TextAlign.center),
+      content: Container(
+        height: 120,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SizedBox(height: 15),
+            Text(
+              "${GlobalVariables.recentBuilding}-${GlobalVariables.recentClassroom}",
+              style: TextStyle(
+                fontSize: 17,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+            SizedBox(height: 3),
+            Text(
+              "${formatter.format(startTime)} ~ ${formatterHour.format(endTime)}",
+              style: TextStyle(
+                fontSize: 17,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+            SizedBox(height: 20),
+            Text(
+              "예약하시겠습니까?",
+              style: TextStyle(
+                fontSize: 17,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            SizedBox(height: 5),
+            Text(
+              "* 예약시간 10분 후 미입실시 예약이 취소됩니다.",
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+                color: Colors.red.shade300,
+              ),
+            ),
+          ],
+        ),
+      ),
       actions: [
-        cancelButton,
-        continueButton,
+        Row(
+          children: [
+            Expanded(
+              child: CupertinoButton(
+                color: Colors.blue.shade800,
+                padding: EdgeInsets.all(0),
+                child: Text("네"),
+                onPressed: () async {
+                  bool result = await doReservation(
+                    userid: pref.userId,
+                    building: GlobalVariables.recentBuilding,
+                    classroom: GlobalVariables.recentClassroom,
+                    start: startTime,
+                    end: endTime,
+                  );
+
+                  if (!result) return;
+                  Navigator.pop(context);
+                  await Future.delayed(Duration(milliseconds: 500));
+                  Navigator.popAndPushNamed(context, "/HomeView");
+                },
+              ),
+            ),
+            SizedBox(width: 3),
+            Expanded(
+              child: CupertinoButton(
+                color: Colors.grey.shade400,
+                padding: EdgeInsets.all(0),
+                child: Text("취소"),
+                onPressed: () => Navigator.pop(context),
+              ),
+            ),
+          ],
+        ),
       ],
     );
 
@@ -261,5 +430,32 @@ class _ReservationViewState extends State<ReservationView> {
         return alert;
       },
     );
+  }
+
+  Future<bool> doReservation({
+    required String userid,
+    required DateTime start,
+    required DateTime end,
+    required String building,
+    required String classroom,
+  }) async {
+    String? appToken = await FirebaseMessaging.instance.getToken();
+
+    http.Response res = await http
+        .post(Uri.parse("https://gcse.doky.space/api/reservation"), body: {
+      "userid": userid,
+      "start": start.toString().split(".")[0],
+      "end": end.toString().split(".")[0],
+      "bd": building,
+      "crn": classroom,
+      "fb_key": appToken,
+    });
+    var data = jsonDecode(res.body);
+    print(res.body);
+
+    if (res.statusCode != 200) return false;
+
+    print(data['success']);
+    return true;
   }
 }
