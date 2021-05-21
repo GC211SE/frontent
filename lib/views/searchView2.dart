@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gcrs/utils/GlobalVariables.dart';
+import 'package:gcrs/utils/SharedPreferences.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:async';
@@ -82,10 +83,12 @@ class _SearchView2State extends State<SearchView2> {
   }
 
   Widget buildRoomCard(String roomID) {
+    PreferencesManager pref = PreferencesManager.instance;
+
     return FutureBuilder<Map<String, dynamic>>(
       future: getRoomData(roomID),
       builder: (_, snapshot) {
-        String using = "loading", reserved = "loading";
+        String using = "-", reserved = "-";
         if (snapshot.connectionState == ConnectionState.done) {
           using = snapshot.data!["using"].toString();
           reserved = snapshot.data!["reserved"].toString();
@@ -95,6 +98,32 @@ class _SearchView2State extends State<SearchView2> {
           title: Row(
             children: [
               Expanded(child: Text('강의실 - $roomID')),
+              Expanded(
+                child: CupertinoButton(
+                  color: Colors.white,
+                  child: Icon(
+                    Icons.star,
+                    color: pref.starredClassroom.indexOf(
+                                "${GlobalVariables.building}---$roomID") ==
+                            -1
+                        ? Colors.grey.shade200
+                        : Colors.amber,
+                  ),
+                  onPressed: () {
+                    List<String> starlist = pref.starredClassroom;
+                    int index = starlist
+                        .indexOf("${GlobalVariables.building}---$roomID");
+                    if (index == -1) {
+                      starlist.add("${GlobalVariables.building}---$roomID");
+                      pref.starredClassroom = starlist;
+                    } else {
+                      starlist.remove("${GlobalVariables.building}---$roomID");
+                      pref.starredClassroom = starlist;
+                    }
+                    setState(() {});
+                  },
+                ),
+              ),
               Expanded(
                 child: Container(
                   alignment: Alignment.centerRight,

@@ -30,6 +30,7 @@ dependencies:
   shared_preferences: ^2.0.5
   
   # For reservation
+  intl: ^0.17.0
   f_datetimerangepicker: ^0.1.4
   # TODO: Change to https://pub.dev/packages/flutter_datetime_picker
 

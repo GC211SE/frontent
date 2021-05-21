@@ -1,10 +1,14 @@
+import 'dart:convert';
+
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gcrs/utils/GlobalVariables.dart';
+import 'package:gcrs/utils/SharedPreferences.dart';
 import 'package:gcrs/utils/noti.dart';
 import 'package:gcrs/utils/notification.dart' as fcm;
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 
 class HomeView extends StatefulWidget {
   @override
@@ -17,7 +21,7 @@ class _HomeViewState extends State<HomeView> {
   @override
   void initState() {
     cloudMessaging = fcm.FirebaseCloudMessaging();
-
+    getData();
     Future(cloudMessaging.init);
     super.initState();
   }
@@ -146,15 +150,11 @@ class _HomeViewState extends State<HomeView> {
     );
   }
 
-  Future<void> sendRequest() async {
-    String? appToken = await FirebaseMessaging.instance.getToken();
-    print(appToken);
-    await http.post(
-      Uri.parse("https://gcse.doky.space/api/reservation/pushtest"),
-      body: {"appToken": appToken},
-    );
-  }
-
+  ///
+  ///
+  ///
+  ///
+  ///
   // User widget
   Widget user() {
     print(GlobalVariables.userImg);
@@ -216,76 +216,109 @@ class _HomeViewState extends State<HomeView> {
             ),
           ),
           SizedBox(height: 13),
-          Padding(
-            padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-            child: Container(
-              height: 110,
-              child: Card(
-                margin: EdgeInsets.all(0),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(13),
-                ),
-                elevation: 5,
-                child: Padding(
-                  padding: EdgeInsets.all(10),
-                  child: Row(
+
+          //reservationWidgetDatas
+
+          Builder(
+            builder: (_) {
+              List<Widget> result = [];
+
+              for (var item in reservationWidgetDatas) {
+                result.add(
+                  Column(
                     children: [
-                      Expanded(
-                        flex: 70,
-                        child: Padding(
-                          padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                "IT대학-304",
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.w800,
-                                ),
-                              ),
-                              Text(
-                                "9:00 ~ 10:00",
-                                style: TextStyle(
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.w800,
-                                ),
-                              ),
-                              SizedBox(height: 10),
-                              Text(
-                                "0명 예약   |   0명 사용중",
-                                style: TextStyle(
-                                  fontSize: 15,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                      Expanded(
-                        flex: 30,
+                      Padding(
+                        padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
                         child: Container(
-                          height: 100,
-                          padding: EdgeInsets.all(7),
-                          child: Expanded(
-                            child: CupertinoButton(
-                              color: Colors.blue,
-                              padding: EdgeInsets.all(0),
-                              child: Text("입장"),
-                              onPressed: () {
-                                Navigator.pushNamed(context, "/Checkin");
-                              },
+                          height: 110,
+                          child: Card(
+                            margin: EdgeInsets.all(0),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(13),
+                            ),
+                            elevation: 5,
+                            child: Padding(
+                              padding: EdgeInsets.all(10),
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    flex: 70,
+                                    child: Padding(
+                                      padding:
+                                          EdgeInsets.fromLTRB(10, 0, 10, 0),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Text(
+                                            item.classroom,
+                                            style: TextStyle(
+                                              fontSize: 20,
+                                              fontWeight: FontWeight.w800,
+                                            ),
+                                          ),
+                                          Text(
+                                            "${item.start} ~ ${item.end}",
+                                            style: TextStyle(
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.w800,
+                                            ),
+                                          ),
+                                          SizedBox(height: 10),
+                                          Text(
+                                            "${item.reservedNum}명 예약   |   ${item.currentNum}명 사용중",
+                                            style: TextStyle(
+                                              fontSize: 15,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    flex: 30,
+                                    child: Container(
+                                      height: 100,
+                                      padding: EdgeInsets.all(7),
+                                      child: Expanded(
+                                        child: CupertinoButton(
+                                          color: Colors.blue,
+                                          padding: EdgeInsets.all(0),
+                                          child: Text("입장"),
+                                          onPressed: () {
+                                            Navigator.pushNamed(
+                                                    context, "/Checkin")
+                                                .then((value) => setState(() {
+                                                      getData();
+                                                    }));
+                                          },
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ),
                       ),
+                      SizedBox(height: 10),
                     ],
                   ),
-                ),
-              ),
-            ),
+                );
+              }
+
+              return Column(
+                children: [...result],
+              );
+            },
           ),
+
+          ///
+          ///
+          ///
         ],
       ),
     );
@@ -308,7 +341,10 @@ class _HomeViewState extends State<HomeView> {
             color: Colors.grey.shade700,
             size: 20,
           ),
-          onPressed: () => Navigator.pushNamed(context, "/SettingView"),
+          onPressed: () => Navigator.pushNamed(context, "/SettingView")
+              .then((value) => setState(() {
+                    getData();
+                  })),
         ),
       ),
     );
@@ -339,22 +375,234 @@ class _HomeViewState extends State<HomeView> {
             ),
           ),
           SizedBox(height: 13),
-          Padding(
-            padding: EdgeInsets.fromLTRB(10, 20, 10, 0),
-            child: Text("   검색에서 즐겨찾기를 등록해보세요!"),
-          ),
+          if (starredWidgetDatas.length == 0)
+            Padding(
+              padding: EdgeInsets.fromLTRB(10, 20, 10, 0),
+              child: Text("  검색에서 즐겨찾기를 등록해보세요!"),
+            )
+          else
+            Builder(
+              builder: (_) {
+                List<Widget> result = [];
+
+                for (var item in starredWidgetDatas) {
+                  result.add(
+                    Column(
+                      children: [
+                        Padding(
+                          padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                          child: Container(
+                            height: 110,
+                            child: Card(
+                              margin: EdgeInsets.all(0),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(13),
+                              ),
+                              elevation: 5,
+                              child: Padding(
+                                padding: EdgeInsets.all(10),
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      flex: 70,
+                                      child: Padding(
+                                        padding:
+                                            EdgeInsets.fromLTRB(10, 0, 10, 0),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Text(
+                                              item.classroom,
+                                              style: TextStyle(
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.w800,
+                                              ),
+                                            ),
+                                            SizedBox(height: 10),
+                                            Text(
+                                              "${item.reservedNum}명 예약   |   ${item.currentNum}명 사용중",
+                                              style: TextStyle(
+                                                fontSize: 15,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                    Expanded(
+                                      flex: 30,
+                                      child: Container(
+                                        height: 100,
+                                        padding: EdgeInsets.all(7),
+                                        child: Expanded(
+                                          child: CupertinoButton(
+                                            color: Colors.lightGreen,
+                                            padding: EdgeInsets.all(0),
+                                            child: Text("예약"),
+                                            onPressed: () {
+                                              Navigator.pushNamed(context,
+                                                      "/ReservationView")
+                                                  .then((value) => setState(() {
+                                                        getData();
+                                                      }));
+                                            },
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: 10),
+                      ],
+                    ),
+                  );
+                }
+
+                return Column(
+                  children: [...result],
+                );
+              },
+            ),
+
+          ///
+          ///
+          ///
         ],
       ),
     );
   }
 
+  ///
+  ///
+  ///
+  ///
+  ///
   // Reservation button
   Widget reservationBtn() {
     return CupertinoButton(
       padding: EdgeInsets.all(0),
       color: Colors.blue.shade900,
       child: Text("예약하기"),
-      onPressed: () => Navigator.pushNamed(context, "/Search"),
+      onPressed: () =>
+          Navigator.pushNamed(context, "/Search").then((value) => setState(() {
+                getData();
+              })),
     );
   }
+
+  List<ReservationWidgetData> reservationWidgetDatas = [];
+  List<ReservationWidgetData> starredWidgetDatas = [];
+
+  Future<void> getData() async {
+    reservationWidgetDatas = [];
+    starredWidgetDatas = [];
+    // String? appToken = await FirebaseMessaging.instance.getToken();
+    // http.Response res = await http
+    //     .post(Uri.parse("https://gcse.doky.space/api/reservation"), body: {
+    //   "userid": "uhug",
+    //   "start": "2021-05-21 12:00:00",
+    //   "end": "2021-05-21 13:00:00",
+    //   "bd": "IT대학",
+    //   "crn": "304",
+    //   "fb_key": "$appToken",
+    // });
+    // var data = jsonDecode(res.body);
+    // print(data['success']);
+
+    PreferencesManager pref = PreferencesManager.instance;
+
+    await pref.init();
+
+    // Get user reservation
+    http.Response res = await http.get(Uri.parse(
+        "https://gcse.doky.space/api/reservation/personal?userid=${pref.userId}"));
+
+    var data = jsonDecode(res.body)['success'];
+
+    if (data == false) return;
+
+    DateFormat formatter1 = DateFormat("M월 d일 h:mm");
+    DateFormat formatter2 = DateFormat("h:mm");
+
+    for (var i in data) {
+      if (i['enable'] == 0) {
+        var resNum = await http.get(Uri.parse(
+            "https://gcse.doky.space/api/reservation/currtotal?bd=${i['building']}&crn=${i['classroom']}"));
+
+        var resNumber = jsonDecode(resNum.body)['success'];
+
+        var item = ReservationWidgetData(
+          idx: i['idx'],
+          start: formatter1.format(DateTime.parse(i['start'])),
+          end: formatter2.format(DateTime.parse(i['end'])),
+          classroom: i['building'] + "-" + i['classroom'],
+          reservedNum: resNumber['reserved'],
+          currentNum: resNumber['using'],
+        );
+        reservationWidgetDatas.add(item);
+      }
+    }
+
+    // Get user starred room status
+    List<String> starred = pref.starredClassroom;
+
+    String building;
+    String classroom;
+
+    for (String i in starred) {
+      building = i.split("---")[0];
+      classroom = i.split("---")[1];
+
+      res = await http.get(Uri.parse(
+          "https://gcse.doky.space/api/reservation/currtotal?bd=$building&crn=$classroom"));
+
+      var resNumber = jsonDecode(res.body)['success'];
+
+      var starred = ReservationWidgetData(
+        classroom: "$building - $classroom",
+        reservedNum: resNumber['reserved'],
+        currentNum: resNumber['using'],
+      );
+      starredWidgetDatas.add(starred);
+    }
+
+    setState(() {});
+  }
+
+  Future<void> sendRequest() async {
+    String? appToken = await FirebaseMessaging.instance.getToken();
+    print(appToken);
+    await http.post(
+      Uri.parse("https://gcse.doky.space/api/reservation/pushtest"),
+      body: {"appToken": appToken},
+    );
+  }
+
+  //
+
+}
+
+class ReservationWidgetData {
+  final int idx;
+  final String start;
+  final String end;
+  final String classroom;
+  final int currentNum;
+  final int reservedNum;
+
+  ReservationWidgetData({
+    this.idx = -1,
+    this.start = "",
+    this.end = "",
+    required this.classroom,
+    this.currentNum = 0,
+    this.reservedNum = 0,
+  });
 }
