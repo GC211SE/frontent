@@ -7,12 +7,33 @@ class StatusView extends StatefulWidget {
 }
 
 class _StatusViewState extends State<StatusView> {
+  double percent = 0.2;
+  String remainTime = "15:23";
+  String classroom = "IT대학 - 304";
+  String time = "9:00 ~ 9:50";
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Color.fromRGBO(250, 250, 250, 1),
         elevation: 0,
+        toolbarHeight: 120,
+        centerTitle: true,
+        leading: CupertinoButton(
+          child: Icon(
+            CupertinoIcons.back,
+            color: Colors.black,
+          ),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: Text(
+          "예약 현황",
+          style: TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.w800,
+          ),
+        ),
       ),
       backgroundColor: Color.fromRGBO(250, 250, 250, 1),
       body: Padding(
@@ -24,7 +45,7 @@ class _StatusViewState extends State<StatusView> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  SizedBox(height: MediaQuery.of(context).size.height / 15),
+                  SizedBox(height: MediaQuery.of(context).size.height / 10),
                   Stack(
                     alignment: Alignment.center,
                     children: [
@@ -32,7 +53,7 @@ class _StatusViewState extends State<StatusView> {
                         width: 250,
                         height: 250,
                         child: CircularProgressIndicator(
-                          value: 0.8,
+                          value: percent,
                           strokeWidth: 30,
                           backgroundColor: Color.fromRGBO(235, 235, 235, 1),
                           color: Colors.blue.shade800,
@@ -49,7 +70,7 @@ class _StatusViewState extends State<StatusView> {
                             ),
                           ),
                           Text(
-                            "15:28",
+                            remainTime,
                             style: TextStyle(
                               fontSize: 50,
                               fontWeight: FontWeight.w800,
@@ -61,14 +82,14 @@ class _StatusViewState extends State<StatusView> {
                   ),
                   SizedBox(height: 50),
                   Text(
-                    "IT대학 - 304",
+                    classroom,
                     style: TextStyle(
                       fontSize: 30,
                       fontWeight: FontWeight.w800,
                     ),
                   ),
                   Text(
-                    "9:10 ~ 10:00",
+                    time,
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.w800,
@@ -88,7 +109,42 @@ class _StatusViewState extends State<StatusView> {
                                 padding: EdgeInsets.all(0),
                                 color: Colors.blue.shade900,
                                 child: Text("퇴실하기"),
-                                onPressed: () => {},
+                                onPressed: () => showDialog(
+                                  context: context,
+                                  builder: (context) => AlertDialog(
+                                    title: Column(
+                                      children: <Widget>[
+                                        new Text("정말 퇴실하시겠습니까?"),
+                                      ],
+                                    ),
+                                    actions: <Widget>[
+                                      CupertinoButton(
+                                        color: Colors.blue.shade900,
+                                        child: Text("퇴실"),
+                                        onPressed: () {
+                                          ///
+                                          ///
+                                          ///
+                                          ///
+                                          /// 퇴실처리
+
+                                          Navigator.pushNamedAndRemoveUntil(
+                                            context,
+                                            "/HomeView",
+                                            (route) => false,
+                                          );
+                                        },
+                                      ),
+                                      CupertinoButton(
+                                        color: Colors.yellow.shade800,
+                                        child: Text("취소"),
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                ),
                               ),
                             ),
                           ),

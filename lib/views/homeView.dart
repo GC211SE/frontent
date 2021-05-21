@@ -273,7 +273,9 @@ class _HomeViewState extends State<HomeView> {
                               color: Colors.blue,
                               padding: EdgeInsets.all(0),
                               child: Text("입장"),
-                              onPressed: () => print(""),
+                              onPressed: () {
+                                Navigator.pushNamed(context, "/Checkin");
+                              },
                             ),
                           ),
                         ),
