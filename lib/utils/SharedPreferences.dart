@@ -48,7 +48,10 @@ class PreferencesManager {
   }
 
   set userPassword(String password) {
-    if (password.length == 0) return;
+    if (password.length == 0) {
+      _prefs.setStringList(PrefKey.pw, []);
+      return;
+    }
     List<String> result = encrypt(input: password);
     _prefs.setStringList(PrefKey.pw, result);
   }

@@ -5,4 +5,8 @@ class GlobalVariables {
   static String userName = "";
   static String userImg = "";
   static String userDept = "";
+
+  static String recentBuilding = "";
+  static String recentClassroom = "";
+  static int recentIdx = -1;
 }

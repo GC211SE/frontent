@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:gcrs/views/checkinView.dart';
 import 'package:gcrs/views/homeView.dart';
 import 'package:gcrs/views/loginView.dart';
+import 'package:gcrs/views/previousView.dart';
 import 'package:gcrs/views/reservationView.dart';
+import 'package:gcrs/views/searchView.dart';
+import 'package:gcrs/views/searchView2.dart';
 import 'package:gcrs/views/settingView.dart';
+import 'package:gcrs/views/statusView.dart';
 
 void main() {
   runApp(MyApp());
@@ -23,6 +28,11 @@ class _MyAppState extends State<MyApp> {
         "/HomeView": (_) => HomeView(),
         "/SettingView": (_) => SettingView(),
         "/ReservationView": (_) => ReservationView(),
+        "/Status": (_) => StatusView(),
+        "/Checkin": (_) => CheckinView(),
+        "/Search": (_) => SearchView(),
+        "/Search2": (_) => SearchView2(),
+        "/Previous": (_) => PreviousView(),
       },
       theme: ThemeData(fontFamily: "Nanum"),
     );
