@@ -1,5 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:gcrs/utils/SharedPreferences.dart';
+import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 
 class StatusView extends StatefulWidget {
   @override
@@ -7,10 +12,20 @@ class StatusView extends StatefulWidget {
 }
 
 class _StatusViewState extends State<StatusView> {
-  double percent = 0.2;
-  String remainTime = "15:23";
-  String classroom = "IT대학 - 304";
-  String time = "9:00 ~ 9:50";
+  double percent = 0.0;
+  String remainTime = "00:00";
+  String classroom = "Loading..";
+  String time = "";
+  late DateTime endTime;
+  late DateTime startTime;
+  Color circleIndicatorColor = Colors.blue.shade800;
+  PreferencesManager pref = PreferencesManager.instance;
+
+  @override
+  void initState() {
+    super.initState();
+    getData();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +60,7 @@ class _StatusViewState extends State<StatusView> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  SizedBox(height: MediaQuery.of(context).size.height / 10),
+                  Expanded(child: SizedBox()),
                   Stack(
                     alignment: Alignment.center,
                     children: [
@@ -56,7 +71,7 @@ class _StatusViewState extends State<StatusView> {
                           value: percent,
                           strokeWidth: 30,
                           backgroundColor: Color.fromRGBO(235, 235, 235, 1),
-                          color: Colors.blue.shade800,
+                          color: circleIndicatorColor,
                         ),
                       ),
                       Column(
@@ -80,22 +95,29 @@ class _StatusViewState extends State<StatusView> {
                       ),
                     ],
                   ),
-                  SizedBox(height: 50),
-                  Text(
-                    classroom,
-                    style: TextStyle(
-                      fontSize: 30,
-                      fontWeight: FontWeight.w800,
+                  Container(
+                    child: Column(
+                      children: [
+                        SizedBox(height: 30),
+                        Text(
+                          classroom,
+                          style: TextStyle(
+                            fontSize: 30,
+                            fontWeight: FontWeight.w800,
+                          ),
+                        ),
+                        Text(
+                          time,
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w800,
+                            color: Colors.grey.shade600,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  Text(
-                    time,
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w800,
-                      color: Colors.grey.shade600,
-                    ),
-                  ),
+                  Expanded(child: SizedBox()),
                   Expanded(
                     child: Container(
                       alignment: Alignment.bottomCenter,
@@ -118,30 +140,53 @@ class _StatusViewState extends State<StatusView> {
                                       ],
                                     ),
                                     actions: <Widget>[
-                                      CupertinoButton(
-                                        color: Colors.blue.shade900,
-                                        child: Text("퇴실"),
-                                        onPressed: () {
-                                          ///
-                                          ///
-                                          ///
-                                          ///
-                                          /// 퇴실처리
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Expanded(
+                                            child: CupertinoButton(
+                                              color: Colors.blue.shade900,
+                                              padding: EdgeInsets.all(0),
+                                              child: Text("퇴실"),
+                                              onPressed: () async {
+                                                ///
 
-                                          Navigator.pushNamedAndRemoveUntil(
-                                            context,
-                                            "/HomeView",
-                                            (route) => false,
-                                          );
-                                        },
-                                      ),
-                                      CupertinoButton(
-                                        color: Colors.yellow.shade800,
-                                        child: Text("취소"),
-                                        onPressed: () {
-                                          Navigator.pop(context);
-                                        },
-                                      ),
+                                                http.Response res =
+                                                    await http.patch(
+                                                  Uri.parse(
+                                                      "https://gcse.doky.space/api/reservation/checkout"),
+                                                  body: {
+                                                    "userid": pref.userId,
+                                                  },
+                                                );
+
+                                                // Fail
+                                                if (res.statusCode != 200)
+                                                  return;
+
+                                                Navigator
+                                                    .pushNamedAndRemoveUntil(
+                                                  context,
+                                                  "/HomeView",
+                                                  (route) => false,
+                                                );
+                                              },
+                                            ),
+                                          ),
+                                          SizedBox(width: 3),
+                                          Expanded(
+                                            child: CupertinoButton(
+                                              color: Colors.yellow.shade800,
+                                              padding: EdgeInsets.all(0),
+                                              child: Text("취소"),
+                                              onPressed: () {
+                                                Navigator.pop(context);
+                                              },
+                                            ),
+                                          ),
+                                        ],
+                                      )
                                     ],
                                   ),
                                 ),
@@ -160,5 +205,106 @@ class _StatusViewState extends State<StatusView> {
         ),
       ),
     );
+  }
+
+  Future<void> getData() async {
+    http.Response res = await http.get(Uri.parse(
+        "https://gcse.doky.space/api/reservation/current?userid=${pref.userId}"));
+
+    var rawData = jsonDecode(res.body);
+
+    if (rawData['success'].length == 0) return;
+    var data = rawData['success'];
+
+    print(data);
+
+    DateFormat formatterTime = DateFormat("H:mm");
+    // formatter.format(DateTime.parse(i['end'])),
+
+    // {
+    //    idx: 89, userid: uhug, start: 2021-05-30T16:30:00.000Z,
+    //    end: 2021-05-30T19:50:00.000Z,
+    //     building: IT대학, classroom: 304, enable: 1
+    // }
+
+    // double percent = 0.2;
+    // String remainTime = "15:23";
+    classroom = "${data['building']} - ${data['classroom']}";
+    startTime = DateTime.parse(data['start']);
+    endTime = DateTime.parse(data['end']);
+
+    time =
+        "${formatterTime.format(startTime)} ~ ${formatterTime.format(endTime)}";
+
+    timer();
+  }
+
+  Future<void> timer() async {
+    bool isTimerEnd = false;
+    while (!isTimerEnd) {
+      DateTime now = DateTime.now();
+
+      // Change to GMT+9
+      now = now.toUtc();
+      now = now.add(Duration(hours: 9));
+
+      Duration remain = endTime.difference(now);
+
+      if (remain.compareTo(Duration(seconds: 0)) == -1) {
+        isTimerEnd = true;
+        remainTime = "00:00";
+        percent = 1.0;
+        circleIndicatorColor = Colors.blue.shade800;
+        setState(() {});
+        break;
+      }
+
+      // Label
+      remainTime = timeFormatter(
+        hour: remain.inHours,
+        minute: remain.inMinutes - remain.inHours * 60,
+        second: remain.inSeconds - remain.inMinutes * 60,
+      );
+
+      // ProgressIndicator
+      Duration total = endTime.difference(startTime);
+      int totalC = total.inSeconds;
+      int remainC = remain.inSeconds;
+
+      if (20 > remain.inMinutes && remain.inMinutes >= 10) {
+        circleIndicatorColor = Colors.yellow.shade600;
+      } else if (10 > remain.inMinutes) {
+        circleIndicatorColor = Colors.red;
+      } else {
+        circleIndicatorColor = Colors.blue.shade800;
+      }
+
+      percent = 1 - (remainC / totalC);
+
+      setState(() {});
+      await Future.delayed(Duration(milliseconds: 1000));
+    }
+  }
+
+  String timeFormatter({
+    required int hour,
+    required int minute,
+    required int second,
+  }) {
+    String res = "";
+
+    if (hour > 0) res += "$hour:";
+
+    if (minute < 10)
+      res += "0$minute:";
+    else
+      res += "$minute:";
+
+    if (second < 10)
+      res += "0$second";
+    else
+      res += "$second";
+
+    return res;
   }
 }

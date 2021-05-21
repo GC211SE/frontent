@@ -26,6 +26,8 @@ class _HomeViewState extends State<HomeView> {
     super.initState();
   }
 
+  bool isUsing = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -284,16 +286,34 @@ class _HomeViewState extends State<HomeView> {
                                       padding: EdgeInsets.all(7),
                                       child: Expanded(
                                         child: CupertinoButton(
-                                          color: Colors.blue,
+                                          color: item.enable == 0
+                                              ? Colors.blue
+                                              : Colors.blue.shade900,
+                                          disabledColor: Colors.grey.shade300,
                                           padding: EdgeInsets.all(0),
-                                          child: Text("입장"),
-                                          onPressed: () {
-                                            Navigator.pushNamed(
-                                                    context, "/Checkin")
-                                                .then((value) => setState(() {
-                                                      getData();
-                                                    }));
-                                          },
+                                          child: Text(
+                                              item.enable == 0 ? "입장" : "보기"),
+                                          onPressed: item.enable == 0 && isUsing
+                                              ? null
+                                              : item.enable == 0
+                                                  ? () {
+                                                      Navigator.pushNamed(
+                                                              context,
+                                                              "/Checkin")
+                                                          .then((value) =>
+                                                              setState(() {
+                                                                getData();
+                                                              }));
+                                                    }
+                                                  : () {
+                                                      Navigator.pushNamed(
+                                                              context,
+                                                              "/Status")
+                                                          .then((value) =>
+                                                              setState(() {
+                                                                getData();
+                                                              }));
+                                                    },
                                         ),
                                       ),
                                     ),
@@ -503,6 +523,7 @@ class _HomeViewState extends State<HomeView> {
   Future<void> getData() async {
     reservationWidgetDatas = [];
     starredWidgetDatas = [];
+    isUsing = false;
     // String? appToken = await FirebaseMessaging.instance.getToken();
     // http.Response res = await http
     //     .post(Uri.parse("https://gcse.doky.space/api/reservation"), body: {
@@ -528,8 +549,34 @@ class _HomeViewState extends State<HomeView> {
 
     if (data == false) return;
 
-    DateFormat formatter1 = DateFormat("M월 d일 h:mm");
-    DateFormat formatter2 = DateFormat("h:mm");
+    DateFormat formatter1 = DateFormat("M월 d일  |  H:mm");
+    DateFormat formatter2 = DateFormat("H:mm");
+
+    for (var i in data) {
+      if (i['enable'] == 1) {
+        var resNum = await http.get(Uri.parse(
+            "https://gcse.doky.space/api/reservation/currtotal?bd=${i['building']}&crn=${i['classroom']}"));
+
+        var resNumber = jsonDecode(resNum.body)['success'];
+
+        var item = ReservationWidgetData(
+          idx: i['idx'],
+          enable: 1,
+          start: formatter1.format(DateTime.parse(i['start'])),
+          end: formatter2.format(DateTime.parse(i['end'])),
+          classroom: i['building'] + "-" + i['classroom'],
+          reservedNum: resNumber['reserved'],
+          currentNum: resNumber['using'],
+        );
+        reservationWidgetDatas.add(item);
+      }
+    }
+
+    // If user using classroom disable buttons
+    if (reservationWidgetDatas.length != 0)
+      isUsing = true;
+    else
+      isUsing = false;
 
     for (var i in data) {
       if (i['enable'] == 0) {
@@ -540,6 +587,7 @@ class _HomeViewState extends State<HomeView> {
 
         var item = ReservationWidgetData(
           idx: i['idx'],
+          enable: 0,
           start: formatter1.format(DateTime.parse(i['start'])),
           end: formatter2.format(DateTime.parse(i['end'])),
           classroom: i['building'] + "-" + i['classroom'],
@@ -566,6 +614,7 @@ class _HomeViewState extends State<HomeView> {
       var resNumber = jsonDecode(res.body)['success'];
 
       var starred = ReservationWidgetData(
+        enable: -1,
         classroom: "$building - $classroom",
         reservedNum: resNumber['reserved'],
         currentNum: resNumber['using'],
@@ -596,6 +645,7 @@ class ReservationWidgetData {
   final String classroom;
   final int currentNum;
   final int reservedNum;
+  final int enable;
 
   ReservationWidgetData({
     this.idx = -1,
@@ -604,5 +654,6 @@ class ReservationWidgetData {
     required this.classroom,
     this.currentNum = 0,
     this.reservedNum = 0,
+    required this.enable,
   });
 }
