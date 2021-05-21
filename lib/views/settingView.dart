@@ -15,6 +15,7 @@ class _SettingViewState extends State<SettingView> {
       appBar: AppBar(
         backgroundColor: Color.fromRGBO(250, 250, 250, 1),
         elevation: 0,
+        toolbarHeight: 90,
         centerTitle: true,
         leading: CupertinoButton(
           child: Icon(
@@ -110,6 +111,30 @@ class _SettingViewState extends State<SettingView> {
                       ],
                     ),
                     onPressed: () => initializeStarred(),
+                  ),
+                ),
+              ),
+              SizedBox(height: 10),
+              Container(
+                height: 70,
+                child: Card(
+                  elevation: 3,
+                  margin: EdgeInsets.all(0),
+                  child: CupertinoButton(
+                    padding: EdgeInsets.fromLTRB(30, 0, 0, 0),
+                    color: Colors.white,
+                    child: Row(
+                      children: [
+                        Text(
+                          "예약 기록",
+                          style: TextStyle(
+                            fontSize: 17,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ],
+                    ),
+                    onPressed: () => Navigator.pushNamed(context, "/Previous"),
                   ),
                 ),
               ),

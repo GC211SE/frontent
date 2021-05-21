@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gcrs/views/checkinView.dart';
 import 'package:gcrs/views/homeView.dart';
 import 'package:gcrs/views/loginView.dart';
+import 'package:gcrs/views/previousView.dart';
 import 'package:gcrs/views/reservationView.dart';
 import 'package:gcrs/views/searchView.dart';
 import 'package:gcrs/views/searchView2.dart';
@@ -31,6 +32,7 @@ class _MyAppState extends State<MyApp> {
         "/Checkin": (_) => CheckinView(),
         "/Search": (_) => SearchView(),
         "/Search2": (_) => SearchView2(),
+        "/Previous": (_) => PreviousView(),
       },
       theme: ThemeData(fontFamily: "Nanum"),
     );
