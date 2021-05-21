@@ -97,7 +97,7 @@ class _SearchView2State extends State<SearchView2> {
             child: ListTile(
           title: Row(
             children: [
-              Expanded(child: Text('강의실 - $roomID')),
+              Expanded(child: Text(' $roomID 호')),
               Expanded(child: SizedBox()),
               CupertinoButton(
                 padding: EdgeInsets.all(0),
@@ -135,8 +135,7 @@ class _SearchView2State extends State<SearchView2> {
             ],
           ),
           onTap: () {
-            print(roomID);
-            GlobalVariables.recentClassroom = "";
+            GlobalVariables.recentClassroom = roomID;
             Navigator.pushNamed(
               context,
               "/ReservationView",

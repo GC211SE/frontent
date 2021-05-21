@@ -9,17 +9,21 @@ class Header extends StatelessWidget {
   // 상단 요일 바
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: 40,
-      child: Card(
-        margin: EdgeInsets.fromLTRB(0, 0, 0, 2.0),
-        child: Row(
-
+    return Column(
+      children: [
+        Container(
+          margin: EdgeInsets.fromLTRB(0, 0, 0, 10),
+          child: Row(
             children: dates
                 .map((day) => Expanded(child: Center(child: Text(day))))
-                .toList()),
-        elevation: 8.0,
-      ),
+                .toList(),
+          ),
+        ),
+        Divider(
+          height: 1.2,
+          thickness: 1.2,
+        ),
+      ],
     );
   }
 }

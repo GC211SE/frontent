@@ -56,7 +56,12 @@ class _PreviousViewState extends State<PreviousView> {
                         Expanded(child: SizedBox()),
                         Expanded(
                           flex: 2,
-                          child: reservationList(),
+                          child: ListView(
+                            physics: BouncingScrollPhysics(),
+                            children: [
+                              reservationList(),
+                            ],
+                          ),
                         ),
                         Expanded(child: SizedBox()),
                       ],
