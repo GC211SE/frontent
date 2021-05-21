@@ -61,6 +61,8 @@ class ReservationView extends StatefulWidget {
 }
 
 class _ReservationViewState extends State<ReservationView> {
+  DateTime startTime = DateTime.now();
+  DateTime endTime = DateTime.now();
   var data;
   List<Lecture> lecture = [];
   String bd = "IT대학";
@@ -86,8 +88,7 @@ class _ReservationViewState extends State<ReservationView> {
     this.getData();
   }
 
-  DateTime startTime = DateTime.now();
-  DateTime endTime = DateTime.now();
+
   TextEditingController startControl = TextEditingController();
   TextEditingController endControl = TextEditingController();
   @override
@@ -106,6 +107,8 @@ class _ReservationViewState extends State<ReservationView> {
         children: [
           Expanded(
             child: WeeklyTimeTable(
+              startTime: startTime,
+              endTime: endTime,
               locale: 'ko',
               lec: lecture,
             ),
@@ -118,7 +121,7 @@ class _ReservationViewState extends State<ReservationView> {
             },
             child: Text("Test to add lecture"),
           ),
-          /*
+
           Expanded(
             child: new Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -189,7 +192,7 @@ class _ReservationViewState extends State<ReservationView> {
                       })
                 ]),
           ),
-          */
+
           /***  ***/
         ],
       )),

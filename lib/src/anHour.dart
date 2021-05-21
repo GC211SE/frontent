@@ -59,13 +59,13 @@ class _LectureBoxState extends State<LectureBox> {
     super.initState();
     /*** 0: lecture, 1: reservation, 2: nothing? ***/
     if (widget.type == 0){
-      cellColor = Colors.deepOrangeAccent;
-    }
-    else if (widget.type == 1){
       cellColor = Colors.blue;
     }
+    else if (widget.type == 1){
+      cellColor = Colors.deepOrangeAccent;
+    }
     else if (widget.type == 2){
-      cellColor = Colors.teal;
+      cellColor = Colors.white;
     }
   }
 

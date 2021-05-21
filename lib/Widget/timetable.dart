@@ -16,7 +16,7 @@ class RenderSpecificSave {
   final int endMinute;
 
   /// type
-  final int type; // 0: lecture, 1: reservation, 2: nothing?
+  final int type; // 0: lecture, 1: reservation, 2: nothing
 
   RenderSpecificSave({
     required this.date,
@@ -39,6 +39,8 @@ class WeeklyTimeTable extends StatefulWidget {
   final String locale;
 
   final List<Lecture> lec;
+  final DateTime startTime;
+  final DateTime endTime;
 
   WeeklyTimeTable({
     /* set color */
@@ -48,10 +50,11 @@ class WeeklyTimeTable extends StatefulWidget {
     this.draggable = false,
     this.locale = "en",
     required this.lec,
+    required this.startTime,
+    required this.endTime,
   });
 
   @override
-  // _WeeklyTimeTableState createState() => _WeeklyTimeTableState(this.initialSchedule);
   _WeeklyTimeTableState createState() => _WeeklyTimeTableState();
 }
 
@@ -59,7 +62,6 @@ class _WeeklyTimeTableState extends State<WeeklyTimeTable> {
   List widgets = [];
   String locale = 'en';
 
-  // _WeeklyTimeTableState(this.selected);
   _WeeklyTimeTableState();
 
   @override
@@ -71,8 +73,6 @@ class _WeeklyTimeTableState extends State<WeeklyTimeTable> {
     }
 
     super.initState();
-    loadData();
-
   }
 
   /* render timetable */
@@ -95,12 +95,20 @@ class _WeeklyTimeTableState extends State<WeeklyTimeTable> {
               
               /// cell 단위로 쪼개줌
               List<RenderSpecificSave> RSS = lectureToSpecific(widget.lec);
+              
+              /// reservation 더해줌
+              List<RenderSpecificSave> sortedRss = reservationToSpecific(widget.startTime, widget.endTime, RSS);
+              
+              /// RSS에 reservation 소팅해서 더해줌
 
+
+
+              /// row(시간) 별로 그려줌
               for (int dateIdx = 0; dateIdx < 7; dateIdx++) {
                 bool isLecture = false;
                 List<int> RenderSpecificIdx = []; // 한개의 cell 대신 그려야하는 class와 reservation의 모든것
                 for (int RSSIdx = 0; RSSIdx < RSS.length; RSSIdx++) {
-                  if (dateIdx == RSS[RSSIdx].date && index == RSS[RSSIdx].hour - 9) {
+                  if (dateIdx == RSS[RSSIdx].date && index == RSS[RSSIdx].hour - 8) {
                     isLecture = true;
                     RenderSpecificIdx.add(RSSIdx);
                   }
@@ -117,7 +125,6 @@ class _WeeklyTimeTableState extends State<WeeklyTimeTable> {
                       if(renderedTime >= RSS[RenderSpecificIdx[count]].endMinute){ /// 만약 중복되는 시간에 뭔가 있으면 뛰어 넘는다.
                         count++;
                       }
-
                     }
                     else if (renderedTime == RSS[RenderSpecificIdx[count]].startMinute){ /// 같으면 앞에꺼를 잘 그려준거임 --> 다음 강의를 그려주면 됨
                       lecturecell.add(LectureBox(height: RSS[RenderSpecificIdx[count]].endMinute.toDouble() - RSS[RenderSpecificIdx[count]].startMinute.toDouble(), type:  RSS[RenderSpecificIdx[count]].type));
@@ -152,11 +159,6 @@ class _WeeklyTimeTableState extends State<WeeklyTimeTable> {
     );
   }
 
-  loadData() async {
-    setState(() {
-      // TODO: reservation받아와서 바꿈
-    });
-  }
 }
 
 List<RenderSpecificSave> lectureToSpecific(List<Lecture> lec){
@@ -173,7 +175,7 @@ List<RenderSpecificSave> lectureToSpecific(List<Lecture> lec){
     for (int j = startHour; j <= endHour; j++){
       if (j == startHour && j == endHour){ // 같은 시간(cell)에 start, end 다 있을경우
         renderSpecificSave.add(new RenderSpecificSave(date: int.parse(lec[i].date), hour: j, startMinute: startMinute, endMinute: endMinute, type: 0));
-        print ("같은시간 " + lec[i].date + " " + j.toString() + " " + startMinute.toString() + " " + endMinute.toString());
+        // print ("같은시간 " + lec[i].date + " " + j.toString() + " " + startMinute.toString() + " " + endMinute.toString());
       }
       else if(j == startHour){ // 시작 시간(cell)인 경우
         renderSpecificSave.add(new RenderSpecificSave(date: int.parse(lec[i].date), hour: j, startMinute: startMinute, endMinute: 60, type: 0));
@@ -193,4 +195,57 @@ List<RenderSpecificSave> lectureToSpecific(List<Lecture> lec){
 
   /// 리턴함
   return renderSpecificSave;
+}
+
+List<RenderSpecificSave> reservationToSpecific(DateTime startTime, DateTime endTime,  List<RenderSpecificSave> RSS) {
+
+
+  /// time string 을 int형 시간과 분으로 바꿔줌
+  int startHour = startTime.hour;
+  int startMinute = startTime.minute;
+  int endHour = endTime.hour;
+  int endMinute = endTime.minute;
+  int date = startTime.weekday;
+  if (date == 7){
+    date = 0;
+  }
+
+
+  for (int j = startHour; j <= endHour; j++) {
+    RenderSpecificSave? renderSpecificSave;
+
+    if (j == startHour && j == endHour) { // 같은 시간(cell)에 start, end 다 있을경우
+      renderSpecificSave = new RenderSpecificSave(date: date, hour: j, startMinute: startMinute, endMinute: endMinute, type: 1);
+      print("같은시간 " + date.toString() + " " + j.toString() + " " + startMinute.toString() + " " + endMinute.toString());
+    }
+    else if (j == startHour) { // 시작 시간(cell)인 경우
+      renderSpecificSave = new RenderSpecificSave(date: date, hour: j, startMinute: startMinute, endMinute: 60, type: 1);
+      print("시작시간 " + date.toString() +  " " + j.toString() + " " + startMinute.toString() + " " + "60");
+    }
+    else if (j == endHour && endMinute != 0) {
+      renderSpecificSave = new RenderSpecificSave(date: date, hour: j, startMinute: 0, endMinute: endMinute, type: 1);
+      print("끝인시간 " + " " + j.toString() + " " + "0" + " " + endMinute.toString());
+    }
+    else {
+      renderSpecificSave = new RenderSpecificSave(date:date, hour: j, startMinute: 0, endMinute: 60, type: 1);
+      print("중간시간 " + " " + j.toString() + " " + "0" + " " + "60");
+    }
+
+    for (int i = 0; i < RSS.length; i++){
+      if (RSS[i].date > renderSpecificSave.date){
+        RSS.insert(i, renderSpecificSave);
+        break;
+      }
+      else if (RSS[i].date == renderSpecificSave.date && RSS[i].hour > renderSpecificSave.hour){
+        RSS.insert(i, renderSpecificSave);
+        break;
+      }
+      else if (RSS[i].date == renderSpecificSave.date && RSS[i].hour == renderSpecificSave.hour && RSS[i].startMinute == renderSpecificSave.startMinute){
+        RSS.insert(i, renderSpecificSave);
+        break;
+      }
+    }
+  }
+
+  return RSS;
 }
