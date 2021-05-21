@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -56,6 +57,13 @@ class SearchView2 extends StatelessWidget {
         backgroundColor: Color.fromRGBO(250, 250, 250, 1),
         elevation: 0,
         centerTitle: true,
+        leading: CupertinoButton(
+          child: Icon(
+            CupertinoIcons.back,
+            color: Colors.black,
+          ),
+          onPressed: () => Navigator.pop(context),
+        ),
         title: Text(
           "$building\n강의실 선택하기",
           style: TextStyle(
