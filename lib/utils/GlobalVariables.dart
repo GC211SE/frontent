@@ -6,6 +6,7 @@ class GlobalVariables {
   static String userImg = "";
   static String userDept = "";
 
-  static String building = "";
-  static String classroom = "";
+  static String recentBuilding = "";
+  static String recentClassroom = "";
+  static int recentIdx = -1;
 }

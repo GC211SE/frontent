@@ -77,7 +77,7 @@ class _SearchViewState extends State<SearchView> {
         return new Card(
           child: ListTile(
               onTap: () {
-                GlobalVariables.building = data[index];
+                GlobalVariables.recentBuilding = data[index];
                 Navigator.pushNamed(context, "/Search2");
               },
               title: Text(data[index])),

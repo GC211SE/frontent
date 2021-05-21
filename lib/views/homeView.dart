@@ -225,7 +225,6 @@ class _HomeViewState extends State<HomeView> {
               padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
               child: Text("  예약 내역이 없습니다."),
             ),
-          //reservationWidgetDatas
 
           Builder(
             builder: (_) {
@@ -551,8 +550,8 @@ class _HomeViewState extends State<HomeView> {
                                             padding: EdgeInsets.all(0),
                                             child: Text("예약"),
                                             onPressed: () {
-                                              Navigator.pushNamed(context,
-                                                      "/ReservationView")
+                                              Navigator.pushNamed(
+                                                      context, "/Checkin")
                                                   .then((value) => setState(() {
                                                         getData();
                                                       }));
@@ -605,6 +604,14 @@ class _HomeViewState extends State<HomeView> {
     );
   }
 
+  //
+  //
+  //
+  //
+  //
+  //
+  // Functions
+
   List<ReservationWidgetData> reservationWidgetDatas = [];
   List<ReservationWidgetData> starredWidgetDatas = [];
 
@@ -612,18 +619,6 @@ class _HomeViewState extends State<HomeView> {
     reservationWidgetDatas = [];
     starredWidgetDatas = [];
     isUsing = false;
-    // String? appToken = await FirebaseMessaging.instance.getToken();
-    // http.Response res = await http
-    //     .post(Uri.parse("https://gcse.doky.space/api/reservation"), body: {
-    //   "userid": "uhug",
-    //   "start": "2021-05-21 12:00:00",
-    //   "end": "2021-05-21 13:00:00",
-    //   "bd": "IT대학",
-    //   "crn": "304",
-    //   "fb_key": "$appToken",
-    // });
-    // var data = jsonDecode(res.body);
-    // print(data['success']);
 
     await pref.init();
 
@@ -709,15 +704,6 @@ class _HomeViewState extends State<HomeView> {
     }
 
     setState(() {});
-  }
-
-  Future<void> sendRequest() async {
-    String? appToken = await FirebaseMessaging.instance.getToken();
-    print(appToken);
-    await http.post(
-      Uri.parse("https://gcse.doky.space/api/reservation/pushtest"),
-      body: {"appToken": appToken},
-    );
   }
 
   //

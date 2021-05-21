@@ -32,7 +32,7 @@ class _SearchView2State extends State<SearchView2> {
         title: Column(
           children: [
             Text(
-              "${GlobalVariables.building}",
+              "${GlobalVariables.recentBuilding}",
               style: TextStyle(
                 fontSize: 30,
                 color: Colors.black,
@@ -105,20 +105,21 @@ class _SearchView2State extends State<SearchView2> {
                 child: Icon(
                   Icons.star,
                   color: pref.starredClassroom.indexOf(
-                              "${GlobalVariables.building}---$roomID") ==
+                              "${GlobalVariables.recentBuilding}---$roomID") ==
                           -1
                       ? Colors.grey.shade200
                       : Colors.amber,
                 ),
                 onPressed: () {
                   List<String> starlist = pref.starredClassroom;
-                  int index =
-                      starlist.indexOf("${GlobalVariables.building}---$roomID");
+                  int index = starlist
+                      .indexOf("${GlobalVariables.recentBuilding}---$roomID");
                   if (index == -1) {
-                    starlist.add("${GlobalVariables.building}---$roomID");
+                    starlist.add("${GlobalVariables.recentBuilding}---$roomID");
                     pref.starredClassroom = starlist;
                   } else {
-                    starlist.remove("${GlobalVariables.building}---$roomID");
+                    starlist
+                        .remove("${GlobalVariables.recentBuilding}---$roomID");
                     pref.starredClassroom = starlist;
                   }
                   setState(() {});
@@ -135,7 +136,7 @@ class _SearchView2State extends State<SearchView2> {
           ),
           onTap: () {
             print(roomID);
-            GlobalVariables.classroom = "";
+            GlobalVariables.recentClassroom = "";
             Navigator.pushNamed(
               context,
               "/ReservationView",
@@ -148,7 +149,7 @@ class _SearchView2State extends State<SearchView2> {
 
   Future<List<String>> getData() async {
     http.Response res = await http.get(Uri.parse(
-        "https://gcse.doky.space/api/schedule/classrooms?bd=${GlobalVariables.building}"));
+        "https://gcse.doky.space/api/schedule/classrooms?bd=${GlobalVariables.recentBuilding}"));
     return (jsonDecode(res.body)["result"] as List)
         .map<String>((e) => e.toString())
         .toList();
@@ -156,7 +157,7 @@ class _SearchView2State extends State<SearchView2> {
 
   Future<Map<String, dynamic>> getRoomData(String roomID) async {
     http.Response res2 = await http.get(Uri.parse(
-        "https://gcse.doky.space/api/reservation/currtotal?bd=${GlobalVariables.building}&crn=$roomID"));
+        "https://gcse.doky.space/api/reservation/currtotal?bd=${GlobalVariables.recentBuilding}&crn=$roomID"));
     return {
       'reserved': jsonDecode(res2.body)["success"]["reserved"],
       'using': jsonDecode(res2.body)["success"]["using"],
