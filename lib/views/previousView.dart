@@ -158,7 +158,7 @@ class _PreviousViewState extends State<PreviousView> {
                                                 ? Colors.blue.shade300
                                                 : item.enable == 1
                                                     ? Colors.lightGreen
-                                                    : Colors.grey.shade300,
+                                                    : Colors.grey.shade400,
                                             alignment: Alignment.center,
                                             height: 50,
                                             width: 50,
@@ -167,8 +167,12 @@ class _PreviousViewState extends State<PreviousView> {
                                               item.enable == 0
                                                   ? "예약"
                                                   : item.enable == 1
-                                                      ? "사용중"
+                                                      ? "사용\n중"
                                                       : "사용\n완료",
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.w800),
                                             ),
                                           ),
                                         ),
@@ -217,8 +221,8 @@ class _PreviousViewState extends State<PreviousView> {
 
     if (data == false) return;
 
-    DateFormat formatter1 = DateFormat("M월 d일  |  h:mm");
-    DateFormat formatter2 = DateFormat("h:mm");
+    DateFormat formatter1 = DateFormat("M월 d일  |  H:mm");
+    DateFormat formatter2 = DateFormat("H:mm");
 
     for (var i in data) {
       var resNum = await http.get(Uri.parse(

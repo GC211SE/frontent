@@ -98,31 +98,31 @@ class _SearchView2State extends State<SearchView2> {
           title: Row(
             children: [
               Expanded(child: Text('강의실 - $roomID')),
-              Expanded(
-                child: CupertinoButton(
-                  color: Colors.white,
-                  child: Icon(
-                    Icons.star,
-                    color: pref.starredClassroom.indexOf(
-                                "${GlobalVariables.building}---$roomID") ==
-                            -1
-                        ? Colors.grey.shade200
-                        : Colors.amber,
-                  ),
-                  onPressed: () {
-                    List<String> starlist = pref.starredClassroom;
-                    int index = starlist
-                        .indexOf("${GlobalVariables.building}---$roomID");
-                    if (index == -1) {
-                      starlist.add("${GlobalVariables.building}---$roomID");
-                      pref.starredClassroom = starlist;
-                    } else {
-                      starlist.remove("${GlobalVariables.building}---$roomID");
-                      pref.starredClassroom = starlist;
-                    }
-                    setState(() {});
-                  },
+              Expanded(child: SizedBox()),
+              CupertinoButton(
+                padding: EdgeInsets.all(0),
+                color: Colors.white,
+                child: Icon(
+                  Icons.star,
+                  color: pref.starredClassroom.indexOf(
+                              "${GlobalVariables.building}---$roomID") ==
+                          -1
+                      ? Colors.grey.shade200
+                      : Colors.amber,
                 ),
+                onPressed: () {
+                  List<String> starlist = pref.starredClassroom;
+                  int index =
+                      starlist.indexOf("${GlobalVariables.building}---$roomID");
+                  if (index == -1) {
+                    starlist.add("${GlobalVariables.building}---$roomID");
+                    pref.starredClassroom = starlist;
+                  } else {
+                    starlist.remove("${GlobalVariables.building}---$roomID");
+                    pref.starredClassroom = starlist;
+                  }
+                  setState(() {});
+                },
               ),
               Expanded(
                 child: Container(
