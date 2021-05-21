@@ -202,7 +202,7 @@ class _HomeViewState extends State<HomeView> {
                 Expanded(
                   child: Container(
                     child: Text(
-                      "현재 예약 🕑",
+                      " 현재 예약 🕑",
                       style: TextStyle(
                         fontSize: 25,
                         fontWeight: FontWeight.w800,
@@ -305,7 +305,7 @@ class _HomeViewState extends State<HomeView> {
               color: Colors.grey.shade700,
               size: 20,
             ),
-            onPressed: () => {},
+            onPressed: () => Navigator.pushNamed(context, "/SettingView"),
           ),
         ),
       ),
@@ -325,7 +325,7 @@ class _HomeViewState extends State<HomeView> {
                 Expanded(
                   child: Container(
                     child: Text(
-                      "즐겨찾기 ⭐️",
+                      " 즐겨찾기 ⭐️",
                       style: TextStyle(
                         fontSize: 25,
                         fontWeight: FontWeight.w800,
@@ -339,7 +339,7 @@ class _HomeViewState extends State<HomeView> {
           SizedBox(height: 13),
           Padding(
             padding: EdgeInsets.fromLTRB(10, 20, 10, 0),
-            child: Text("검색에서 즐겨찾기를 등록해보세요!"),
+            child: Text("   검색에서 즐겨찾기를 등록해보세요!"),
           ),
         ],
       ),
