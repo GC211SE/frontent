@@ -17,6 +17,7 @@ class HomeView extends StatefulWidget {
 
 class _HomeViewState extends State<HomeView> {
   late FirebaseNotification cloudMessaging;
+  PreferencesManager pref = PreferencesManager.instance;
 
   @override
   void initState() {
@@ -198,6 +199,7 @@ class _HomeViewState extends State<HomeView> {
   Widget reservationList() {
     return Container(
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
             padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
@@ -218,7 +220,11 @@ class _HomeViewState extends State<HomeView> {
             ),
           ),
           SizedBox(height: 13),
-
+          if (reservationWidgetDatas.length == 0)
+            Padding(
+              padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
+              child: Text("  예약 내역이 없습니다."),
+            ),
           //reservationWidgetDatas
 
           Builder(
@@ -244,7 +250,7 @@ class _HomeViewState extends State<HomeView> {
                               child: Row(
                                 children: [
                                   Expanded(
-                                    flex: 70,
+                                    flex: 65,
                                     child: Padding(
                                       padding:
                                           EdgeInsets.fromLTRB(10, 0, 10, 0),
@@ -280,10 +286,11 @@ class _HomeViewState extends State<HomeView> {
                                     ),
                                   ),
                                   Expanded(
-                                    flex: 30,
+                                    flex: 20,
                                     child: Container(
                                       height: 100,
-                                      padding: EdgeInsets.all(7),
+                                      padding:
+                                          EdgeInsets.fromLTRB(7, 7, 3.5, 7),
                                       child: Expanded(
                                         child: CupertinoButton(
                                           color: item.enable == 0
@@ -314,6 +321,87 @@ class _HomeViewState extends State<HomeView> {
                                                                 getData();
                                                               }));
                                                     },
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    flex: 15,
+                                    child: Container(
+                                      height: 100,
+                                      padding:
+                                          EdgeInsets.fromLTRB(3.5, 7, 7, 7),
+                                      child: Expanded(
+                                        child: CupertinoButton(
+                                          color: Colors.red.shade300,
+                                          padding: EdgeInsets.all(0),
+                                          child: Text("취소"),
+                                          onPressed: () => {
+                                            showDialog(
+                                              context: context,
+                                              builder: (context) => AlertDialog(
+                                                title: Column(
+                                                  children: <Widget>[
+                                                    new Text("정말 취소하시겠습니까?"),
+                                                  ],
+                                                ),
+                                                actions: <Widget>[
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
+                                                    children: [
+                                                      Expanded(
+                                                        child: CupertinoButton(
+                                                          color: Colors
+                                                              .red.shade300,
+                                                          padding:
+                                                              EdgeInsets.all(0),
+                                                          child: Text("예약 취소"),
+                                                          onPressed: () async {
+                                                            ///
+
+                                                            http.Response res =
+                                                                await http
+                                                                    .patch(
+                                                              Uri.parse(
+                                                                  "https://gcse.doky.space/api/reservation/cancel"),
+                                                              body: {
+                                                                "userid":
+                                                                    pref.userId,
+                                                                "idx": item.idx
+                                                                    .toString(),
+                                                              },
+                                                            );
+
+                                                            // Fail
+                                                            if (res.statusCode !=
+                                                                200) return;
+
+                                                            Navigator.pop(
+                                                                context);
+                                                          },
+                                                        ),
+                                                      ),
+                                                      SizedBox(width: 3),
+                                                      Expanded(
+                                                        child: CupertinoButton(
+                                                          color: Colors
+                                                              .grey.shade400,
+                                                          padding:
+                                                              EdgeInsets.all(0),
+                                                          child: Text("닫기"),
+                                                          onPressed: () =>
+                                                              Navigator.pop(
+                                                                  context),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  )
+                                                ],
+                                              ),
+                                            ).then((value) => getData()),
+                                          },
                                         ),
                                       ),
                                     ),
@@ -536,8 +624,6 @@ class _HomeViewState extends State<HomeView> {
     // });
     // var data = jsonDecode(res.body);
     // print(data['success']);
-
-    PreferencesManager pref = PreferencesManager.instance;
 
     await pref.init();
 
