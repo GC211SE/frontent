@@ -106,9 +106,7 @@ class _ReservationViewState extends State<ReservationView> {
   @override
   void initState() {
     super.initState();
-    // this.getData(); // 데이터 받아오기
-
-    //임의로 데이터 넣어줌
+    // this.getData(); // 데이터 받아오기 (실제 데이터 사용하려면 110~111 지우고 이거 사용)
     lecture.add(Lecture(date: "1", time: "1"));
     lecture.add(Lecture(date: "3", time: "21"));
   }
@@ -265,13 +263,20 @@ class _ReservationViewState extends State<ReservationView> {
     Widget continueButton = ElevatedButton(
       child: Text("Continue"),
       onPressed: () async {
-        int day = startTime.weekday;
+        int startDay = startTime.weekday;
+        int endDay = endTime.weekday;
         int startH = startTime.hour;
         int startM = startTime.minute;
         int endH = endTime.hour;
         int endM = endTime.minute;
+        
+        if(startDay != endDay){ // 이틀 이상 예약 불가
+          _showDialog();
+          return;
+        }
+
         for (Lecture lec in lecture) {
-          if (day.toString() == lec.date) { // 선택한 요일에 강의가 있으면
+          if (startDay.toString() == lec.date) { // 선택한 요일에 강의가 있으면
             List<int> hourSplit = lec.timeCalculator(lec.time);
 
             if (startH >= hourSplit[0] &&
@@ -300,6 +305,14 @@ class _ReservationViewState extends State<ReservationView> {
                 return;
               }
             }
+            else if (startH <= hourSplit[0] && // 예약시간 안에 강의가 있으면
+                endH >= hourSplit[2]){
+              if(startM <= hourSplit[1] && endM >= hourSplit[3]) {
+                // 예약 불가
+                _showDialog();
+                return;
+              }
+            }
           }
         }
         http.Response res = await http.post(Uri.parse( // reservation API
@@ -317,7 +330,6 @@ class _ReservationViewState extends State<ReservationView> {
           Navigator.pushNamed(context, "/HomeView"); // homeView로
         else // 예약 실패
           _showDialog();
-
       }
     );
 
