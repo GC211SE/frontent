@@ -65,6 +65,9 @@ class ReservationView extends StatefulWidget {
 class _ReservationViewState extends State<ReservationView> {
   DateTime startTime = DateTime.now();
   DateTime endTime = DateTime.now().add(Duration(minutes: 30));
+
+  DateTime startTimeSend = DateTime.now();
+  DateTime endTimeSend = DateTime.now();
   var data;
   List<Lecture> lecture = [];
 
@@ -133,8 +136,8 @@ class _ReservationViewState extends State<ReservationView> {
                 children: [
                   Expanded(
                     child: WeeklyTimeTable(
-                      startTime: startTime,
-                      endTime: endTime,
+                      startTime: startTimeSend,
+                      endTime: startTimeSend,
                       locale: 'ko',
                       lec: lecture,
                     ),
@@ -323,6 +326,11 @@ class _ReservationViewState extends State<ReservationView> {
                               padding: EdgeInsets.all(0),
                               onPressed: () {
                                 showAlertDialog(context);
+                                setState(() {
+                                  startTimeSend = startTime;
+                                  endTimeSend = endTime;
+
+                                });
                               },
                               child: Text("예약하기"),
                             ),
