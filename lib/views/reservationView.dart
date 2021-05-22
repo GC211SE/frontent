@@ -399,11 +399,6 @@ class _ReservationViewState extends State<ReservationView> {
                               padding: EdgeInsets.all(0),
                               onPressed: () {
                                 showAlertDialog(context);
-                                setState(() {
-                                  startTimeSend = startTime;
-                                  endTimeSend = endTime;
-
-                                });
                               },
                               child: Text("예약하기"),
                             ),
