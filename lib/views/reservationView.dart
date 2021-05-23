@@ -330,7 +330,7 @@ class _ReservationViewState extends State<ReservationView> {
                                           }
                                         } else if (startH <= hourSplit[0] && // 예약시간 안에 강의가 있으면
                                             endH >= hourSplit[2]) {
-                                          if (startM <= hourSplit[1] && endM >= hourSplit[3]) {
+                                          if (startM <= hourSplit[1]) {
                                             // 예약 불가
                                             _showDialog();
                                             return;
