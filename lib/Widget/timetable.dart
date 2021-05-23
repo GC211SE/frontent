@@ -119,18 +119,21 @@ class _WeeklyTimeTableState extends State<WeeklyTimeTable> {
                   int renderedTime = 0;
                   List<Widget> lecturecell = [];
 
+
                   for (int count = 0; count < RenderSpecificIdx.length; count) {
                     // TODO : renderSpecificIdx  start minute 순으로 정렬
                     /*** 0: lecture, 1: reservation, 2: nothing? ***/
                     /*** 0: orange, 1: blue, 2: teal ***/
+
                     if (renderedTime >
                         RSS[RenderSpecificIdx[count]].startMinute) {
                       /// 시작시간보다 그린시간이 크면 이건 이상한거임
-                      if (renderedTime >=
+
+                      /*if (renderedTime >=
                           RSS[RenderSpecificIdx[count]].endMinute) {
                         /// 만약 중복되는 시간에 뭔가 있으면 뛰어 넘는다.
-                        count++;
-                      }
+                      }*/
+                      count++;
                     } else if (renderedTime ==
                         RSS[RenderSpecificIdx[count]].startMinute) {
                       /// 같으면 앞에꺼를 잘 그려준거임 --> 다음 강의를 그려주면 됨
@@ -156,7 +159,7 @@ class _WeeklyTimeTableState extends State<WeeklyTimeTable> {
                     }
                   }
 
-                  if (renderedTime != 60) {
+                  if (renderedTime < 60) {
                     lecturecell.add(LectureBox(
                         height: (60 - renderedTime).toDouble(), type: 2));
                   }
@@ -203,7 +206,7 @@ List<RenderSpecificSave> lectureToSpecific(List<Lecture> lec) {
             startMinute: startMinute,
             endMinute: endMinute,
             type: 0));
-        // print ("같은시간 " + lec[i].date + " " + j.toString() + " " + startMinute.toString() + " " + endMinute.toString());
+        print ("같은시간 " + lec[i].date + " " + j.toString() + " " + startMinute.toString() + " " + endMinute.toString());
       } else if (j == startHour) {
         // 시작 시간(cell)인 경우
         renderSpecificSave.add(new RenderSpecificSave(
@@ -212,7 +215,7 @@ List<RenderSpecificSave> lectureToSpecific(List<Lecture> lec) {
             startMinute: startMinute,
             endMinute: 60,
             type: 0));
-        // print ("시작시간 " + lec[i].date + " " + j.toString() + " " + startMinute.toString() + " " + "60");
+        print ("시작시간 " + lec[i].date + " " + j.toString() + " " + startMinute.toString() + " " + "60");
       } else if (j == endHour && endMinute != 0) {
         renderSpecificSave.add(new RenderSpecificSave(
             date: int.parse(lec[i].date),
@@ -220,7 +223,7 @@ List<RenderSpecificSave> lectureToSpecific(List<Lecture> lec) {
             startMinute: 0,
             endMinute: endMinute,
             type: 0));
-        // print ("끝인시간 " + lec[i].date + " " + j.toString() + " " + "0" + " " + endMinute.toString());
+        print ("끝인시간 " + lec[i].date + " " + j.toString() + " " + "0" + " " + endMinute.toString());
       } else if (endMinute != 0) {
         renderSpecificSave.add(new RenderSpecificSave(
             date: int.parse(lec[i].date),
@@ -228,10 +231,10 @@ List<RenderSpecificSave> lectureToSpecific(List<Lecture> lec) {
             startMinute: 0,
             endMinute: 60,
             type: 0));
-        // print ("중간시간 " + lec[i].date + " " + j.toString() + " " + "0" + " " + "60");
+        print ("중간시간 " + lec[i].date + " " + j.toString() + " " + "0" + " " + "60");
       }
     }
-    // print("\n");
+    print("\n");
   }
 
   /// 리턴함
@@ -261,14 +264,14 @@ List<RenderSpecificSave> reservationToSpecific(
           startMinute: startMinute,
           endMinute: endMinute,
           type: 1);
-      debugPrint("같은시간 " +
+      /*debugPrint("같은시간 " +
           date.toString() +
           " " +
           j.toString() +
           " " +
           startMinute.toString() +
           " " +
-          endMinute.toString());
+          endMinute.toString());*/
     } else if (j == startHour) {
       // 시작 시간(cell)인 경우
       renderSpecificSave = new RenderSpecificSave(
@@ -277,28 +280,28 @@ List<RenderSpecificSave> reservationToSpecific(
           startMinute: startMinute,
           endMinute: 60,
           type: 1);
-      debugPrint("시작시간 " +
+      /*debugPrint("시작시간 " +
           date.toString() +
           " " +
           j.toString() +
           " " +
           startMinute.toString() +
           " " +
-          "60");
+          "60");*/
     } else if (j == endHour && endMinute != 0) {
       renderSpecificSave = new RenderSpecificSave(
           date: date, hour: j, startMinute: 0, endMinute: endMinute, type: 1);
-      debugPrint("끝인시간 " +
+      /*debugPrint("끝인시간 " +
           " " +
           j.toString() +
           " " +
           "0" +
           " " +
-          endMinute.toString());
+          endMinute.toString());*/
     } else {
       renderSpecificSave = new RenderSpecificSave(
-          date: date, hour: j, startMinute: 0, endMinute: 60, type: 1);
-      debugPrint("중간시간 " + " " + j.toString() + " " + "0" + " " + "60");
+          date: date, hour: j, startMinute: 0, endMinute: 0, type: 1);
+      /*debugPrint("중간시간 " + " " + j.toString() + " " + "0" + " " + "60");*/
     }
 
     for (int i = 0; i < RSS.length; i++) {
@@ -316,7 +319,8 @@ List<RenderSpecificSave> reservationToSpecific(
         break;
       }
     }
-  }
 
+  }
+  print("Hello");
   return RSS;
 }

@@ -339,8 +339,6 @@ class _ReservationViewState extends State<ReservationView> {
                                       }
                                     }
                                     setState(() {
-                                      print(startTime);
-                                      print(endTime);
                                       startTimeSend = startTime;
                                       endTimeSend = endTime;
                                     });
