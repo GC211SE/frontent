@@ -157,7 +157,7 @@ class _ReservationViewState extends State<ReservationView> {
                   Expanded(
                     child: WeeklyTimeTable(
                       startTime: startTimeSend,
-                      endTime: startTimeSend,
+                      endTime: endTimeSend,
                       locale: 'ko',
                       lec: lecture,
                     ),
@@ -339,6 +339,8 @@ class _ReservationViewState extends State<ReservationView> {
                                       }
                                     }
                                     setState(() {
+                                      print(startTime);
+                                      print(endTime);
                                       startTimeSend = startTime;
                                       endTimeSend = endTime;
                                     });
