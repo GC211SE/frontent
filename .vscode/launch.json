@@ -11,6 +11,9 @@
             "name": "frontent",
             "request": "launch",
             "type": "dart",
+            "args": [
+                "--profile",
+            ]
         }
     ]
 }

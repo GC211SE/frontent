@@ -230,10 +230,10 @@ class _PreviousViewState extends State<PreviousView> {
     DateFormat formatter2 = DateFormat("H:mm");
 
     for (var i in data) {
-      var resNum = await http.get(Uri.parse(
-          "https://gcse.doky.space/api/reservation/currtotal?bd=${i['building']}&crn=${i['classroom']}"));
+      // var resNum = await http.get(Uri.parse(
+      //     "https://gcse.doky.space/api/reservation/currtotal?bd=${i['building']}&crn=${i['classroom']}"));
 
-      var resNumber = jsonDecode(resNum.body)['success'];
+      // var resNumber = jsonDecode(resNum.body)['success'];
 
       var item = ReservationWidgetData(
         idx: i['idx'],
@@ -241,8 +241,8 @@ class _PreviousViewState extends State<PreviousView> {
         start: formatter1.format(DateTime.parse(i['start'])),
         end: formatter2.format(DateTime.parse(i['end'])),
         classroom: i['building'] + "-" + i['classroom'],
-        reservedNum: resNumber['reserved'],
-        currentNum: resNumber['using'],
+        // reservedNum: resNumber['reserved'],
+        // currentNum: resNumber['using'],
       );
       reservationWidgetDatas.add(item);
     }

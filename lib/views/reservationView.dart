@@ -304,31 +304,40 @@ class _ReservationViewState extends State<ReservationView> {
                                     for (Lecture lec in lecture) {
                                       if (startDay.toString() == lec.date) {
                                         // 선택한 요일에 강의가 있으면
-                                        List<int> hourSplit = lec.timeCalculator(lec.time);
+                                        List<int> hourSplit =
+                                            lec.timeCalculator(lec.time);
 
-                                        if (startH >= hourSplit[0] && startH <= hourSplit[2]) {
+                                        if (startH >= hourSplit[0] &&
+                                            startH <= hourSplit[2]) {
                                           // 시작 시간이 강의시간과 겹치면
-                                          if (startH == hourSplit[0] && startM >= hourSplit[1]) {
+                                          if (startH == hourSplit[0] &&
+                                              startM >= hourSplit[1]) {
                                             // 예약 불가
                                             _showDialog();
                                             return;
-                                          } else if (startH == hourSplit[2] && startM <= hourSplit[3]) {
+                                          } else if (startH == hourSplit[2] &&
+                                              startM <= hourSplit[3]) {
                                             // 예약 불가
                                             _showDialog();
                                             return;
                                           }
-                                        } else if (endH >= hourSplit[0] && endH <= hourSplit[2]) {
+                                        } else if (endH >= hourSplit[0] &&
+                                            endH <= hourSplit[2]) {
                                           // 끝나는 시간이 강의시간과 겹치면
-                                          if (endH == hourSplit[0] && endM >= hourSplit[1]) {
+                                          if (endH == hourSplit[0] &&
+                                              endM >= hourSplit[1]) {
                                             // 예약 불가
                                             _showDialog();
                                             return;
-                                          } else if (endH == hourSplit[2] && endM <= hourSplit[3]) {
+                                          } else if (endH == hourSplit[2] &&
+                                              endM <= hourSplit[3]) {
                                             // 예약 불가
                                             _showDialog();
                                             return;
                                           }
-                                        } else if (startH <= hourSplit[0] && // 예약시간 안에 강의가 있으면
+                                        } else if (startH <=
+                                                hourSplit[
+                                                    0] && // 예약시간 안에 강의가 있으면
                                             endH >= hourSplit[2]) {
                                           if (startM <= hourSplit[1]) {
                                             // 예약 불가
@@ -453,7 +462,7 @@ class _ReservationViewState extends State<ReservationView> {
             Text(
               "* 예약시간 10분 후 미입실시 예약이 취소됩니다.",
               style: TextStyle(
-                fontSize: 12,
+                fontSize: 10.5,
                 fontWeight: FontWeight.w600,
                 color: Colors.red.shade300,
               ),

@@ -125,12 +125,11 @@ class _SearchView2State extends State<SearchView2> {
                   setState(() {});
                 },
               ),
-              Expanded(
-                child: Container(
-                  alignment: Alignment.centerRight,
-                  child: Text(
-                      '사용 중 - $using명${MediaQuery.of(context).size.width > GlobalVariables.mobileWidth ? "  |  " : "\n"}예약 중 - $reserved명'),
-                ),
+              Container(
+                width: 100,
+                alignment: Alignment.centerRight,
+                child: Text(
+                    '사용 중 - $using명${MediaQuery.of(context).size.width > GlobalVariables.mobileWidth ? "  |  " : "\n"}예약 중 - $reserved명'),
               ),
             ],
           ),

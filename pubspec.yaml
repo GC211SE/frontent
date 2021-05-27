@@ -3,7 +3,7 @@ description: Gachon Classroom Reservation System
 
 publish_to: 'none'
 
-version: 0.1.0+1
+version: 0.1.2+3
 
 environment:
   sdk: ">=2.12.0 <3.0.0"
