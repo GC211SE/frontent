@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+// a cell indicate an hour
 class Cell extends StatefulWidget {
   final Color cellColor;
   final Color boarderColor;
@@ -37,6 +38,7 @@ class _CellState extends State<Cell> {
   }
 }
 
+/* box that shows less then an hour */
 class LectureBox extends StatefulWidget {
   final Color boarderColor;
   final double height;
@@ -57,7 +59,7 @@ class _LectureBoxState extends State<LectureBox> {
   @override
   void initState() {
     super.initState();
-    /*** 0: lecture, 1: reservation, 2: nothing? ***/
+    /* color of cell 0: lecture, 1: reservation, 2: nothing? */
     if (widget.type == 0){
       cellColor = Colors.blue;
     }
@@ -81,6 +83,6 @@ class _LectureBoxState extends State<LectureBox> {
           ),
         ),
         height: widget.height *4/5,
-        width: MediaQuery.of(context).size.width / 8, // 디바이스 넓이 / 8
+        width: MediaQuery.of(context).size.width / 8, // device width / 8
       );
 }

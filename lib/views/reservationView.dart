@@ -144,7 +144,7 @@ class _ReservationViewState extends State<ReservationView> {
         ),
       ),
 
-      /*** timetable ***/
+      /* timetable */
       body: Container(
         child: Column(
           mainAxisSize: MainAxisSize.max,

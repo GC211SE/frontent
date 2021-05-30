@@ -5,16 +5,17 @@ import 'package:gcrs/src/indicator.dart';
 import 'package:gcrs/src/weekly_times.dart';
 import 'package:gcrs/views/reservationView.dart';
 
+/* time table cell information (lecture, reservation) */
 class RenderSpecificSave {
-  /// 한개의 셀 단위로 쪼개줌
+  // split to one cell
   final int date;
   final int hour;
 
-  /// time
+  // time
   final int startMinute;
   final int endMinute;
 
-  /// type
+  // type
   final int type; // 0: lecture, 1: reservation, 2: nothing
 
   RenderSpecificSave({
@@ -27,7 +28,7 @@ class RenderSpecificSave {
 }
 
 class WeeklyTimeTable extends StatefulWidget {
-  /*** variables ***/
+  /* variables */
   // color
   final Color cellColor;
   final Color cellSelectedColor;
@@ -37,6 +38,7 @@ class WeeklyTimeTable extends StatefulWidget {
   // use language
   final String locale;
 
+  // information
   final List<Lecture> lec;
   final DateTime startTime;
   final DateTime endTime;
@@ -46,6 +48,7 @@ class WeeklyTimeTable extends StatefulWidget {
     this.cellColor = Colors.white,
     this.cellSelectedColor = Colors.blue,
     this.boarderColor = Colors.grey,
+    /* set variables */
     this.draggable = false,
     this.locale = "en",
     required this.lec,
@@ -57,6 +60,7 @@ class WeeklyTimeTable extends StatefulWidget {
   _WeeklyTimeTableState createState() => _WeeklyTimeTableState();
 }
 
+// reservation page-> timetable widget
 class _WeeklyTimeTableState extends State<WeeklyTimeTable> {
   List widgets = [];
   String locale = 'en';
@@ -93,16 +97,14 @@ class _WeeklyTimeTableState extends State<WeeklyTimeTable> {
               /* time bar (left) */
               children.add(Indicator(WeeklyTimes.times[this.locale]![index]));
 
-              /// cell 단위로 쪼개줌
+              // split lecture to cell
               List<RenderSpecificSave> RSS = lectureToSpecific(widget.lec);
 
-              /// reservation 더해줌
+              // add reservation
               List<RenderSpecificSave> sortedRss =
                   reservationToSpecific(widget.startTime, widget.endTime, RSS);
 
-              /// RSS에 reservation 소팅해서 더해줌
-
-              /// row(시간) 별로 그려줌
+              // render time row by row
               for (int dateIdx = 0; dateIdx < 7; dateIdx++) {
                 bool isLecture = false;
                 List<int> RenderSpecificIdx =
@@ -121,22 +123,15 @@ class _WeeklyTimeTableState extends State<WeeklyTimeTable> {
 
 
                   for (int count = 0; count < RenderSpecificIdx.length; count) {
-                    // TODO : renderSpecificIdx  start minute 순으로 정렬
-                    /*** 0: lecture, 1: reservation, 2: nothing? ***/
-                    /*** 0: orange, 1: blue, 2: teal ***/
+                    /* 0: lecture, 1: reservation, 2: nothing? */
+                    /* 0: orange, 1: blue, 2: teal */
 
-                    if (renderedTime >
-                        RSS[RenderSpecificIdx[count]].startMinute) {
-                      /// 시작시간보다 그린시간이 크면 이건 이상한거임
-
-                      /*if (renderedTime >=
-                          RSS[RenderSpecificIdx[count]].endMinute) {
-                        /// 만약 중복되는 시간에 뭔가 있으면 뛰어 넘는다.
-                      }*/
-                      count++;
+                    // pass if start time of next schedule is bigger then rendered time
+                    if (renderedTime > RSS[RenderSpecificIdx[count]].startMinute) {
+                        count++;
                     } else if (renderedTime ==
                         RSS[RenderSpecificIdx[count]].startMinute) {
-                      /// 같으면 앞에꺼를 잘 그려준거임 --> 다음 강의를 그려주면 됨
+                      // if equal pass
                       lecturecell.add(LectureBox(
                           height: RSS[RenderSpecificIdx[count]]
                                   .endMinute
@@ -148,7 +143,7 @@ class _WeeklyTimeTableState extends State<WeeklyTimeTable> {
                       renderedTime = RSS[RenderSpecificIdx[count]].endMinute;
                       count++;
                     } else {
-                      /// 앞에 시간이 모자라면 빈칸을 그려줘야함
+                      // if there is time between current schedule and previous schedule render a empty cell
                       lecturecell.add(LectureBox(
                           height: RSS[RenderSpecificIdx[count]]
                                   .startMinute
@@ -186,7 +181,7 @@ List<RenderSpecificSave> lectureToSpecific(List<Lecture> lec) {
   List<RenderSpecificSave> renderSpecificSave = [];
 
   for (int i = 0; i < lec.length; i++) {
-    /// time string 을 int형 시간과 분으로 바꿔줌
+    // time string to each hour, minute integer
     int startHour =
         int.parse(Lecture.convertToActualTime[lec[i].time]![0].substring(0, 2));
     int startMinute =
@@ -196,26 +191,26 @@ List<RenderSpecificSave> lectureToSpecific(List<Lecture> lec) {
     int endMinute =
         int.parse(Lecture.convertToActualTime[lec[i].time]![1].substring(3, 5));
 
-    /// 쪼개줌
+    // split
     for (int j = startHour; j <= endHour; j++) {
       if (j == startHour && j == endHour) {
-        // 같은 시간(cell)에 start, end 다 있을경우
+        // if start hour equals to end hour -> should be rendered in a cell
         renderSpecificSave.add(new RenderSpecificSave(
             date: int.parse(lec[i].date),
             hour: j,
             startMinute: startMinute,
             endMinute: endMinute,
             type: 0));
-        print ("같은시간 " + lec[i].date + " " + j.toString() + " " + startMinute.toString() + " " + endMinute.toString());
+        // print ("같은시간 " + lec[i].date + " " + j.toString() + " " + startMinute.toString() + " " + endMinute.toString());
       } else if (j == startHour) {
-        // 시작 시간(cell)인 경우
+        // if it's a start hour cell
         renderSpecificSave.add(new RenderSpecificSave(
             date: int.parse(lec[i].date),
             hour: j,
             startMinute: startMinute,
             endMinute: 60,
             type: 0));
-        print ("시작시간 " + lec[i].date + " " + j.toString() + " " + startMinute.toString() + " " + "60");
+        // print ("시작시간 " + lec[i].date + " " + j.toString() + " " + startMinute.toString() + " " + "60");
       } else if (j == endHour && endMinute != 0) {
         renderSpecificSave.add(new RenderSpecificSave(
             date: int.parse(lec[i].date),
@@ -223,7 +218,7 @@ List<RenderSpecificSave> lectureToSpecific(List<Lecture> lec) {
             startMinute: 0,
             endMinute: endMinute,
             type: 0));
-        print ("끝인시간 " + lec[i].date + " " + j.toString() + " " + "0" + " " + endMinute.toString());
+        // print ("끝인시간 " + lec[i].date + " " + j.toString() + " " + "0" + " " + endMinute.toString());
       } else if (endMinute != 0) {
         renderSpecificSave.add(new RenderSpecificSave(
             date: int.parse(lec[i].date),
@@ -231,19 +226,19 @@ List<RenderSpecificSave> lectureToSpecific(List<Lecture> lec) {
             startMinute: 0,
             endMinute: 60,
             type: 0));
-        print ("중간시간 " + lec[i].date + " " + j.toString() + " " + "0" + " " + "60");
+        // print ("중간시간 " + lec[i].date + " " + j.toString() + " " + "0" + " " + "60");
       }
     }
     print("\n");
   }
 
-  /// 리턴함
+  // return widget spec list to render
   return renderSpecificSave;
 }
 
 List<RenderSpecificSave> reservationToSpecific(
     DateTime startTime, DateTime endTime, List<RenderSpecificSave> RSS) {
-  /// time string 을 int형 시간과 분으로 바꿔줌
+  // if start hour equals to end hour -> should be rendered in a cell
   int startHour = startTime.hour;
   int startMinute = startTime.minute;
   int endHour = endTime.hour;
@@ -257,7 +252,7 @@ List<RenderSpecificSave> reservationToSpecific(
     RenderSpecificSave? renderSpecificSave;
 
     if (j == startHour && j == endHour) {
-      // 같은 시간(cell)에 start, end 다 있을경우
+      // if start hour equals to end hour -> should be rendered in a cell
       renderSpecificSave = new RenderSpecificSave(
           date: date,
           hour: j,
@@ -273,7 +268,7 @@ List<RenderSpecificSave> reservationToSpecific(
           " " +
           endMinute.toString());*/
     } else if (j == startHour) {
-      // 시작 시간(cell)인 경우
+      // if it's a start hour cell
       renderSpecificSave = new RenderSpecificSave(
           date: date,
           hour: j,
@@ -304,6 +299,7 @@ List<RenderSpecificSave> reservationToSpecific(
       /*debugPrint("중간시간 " + " " + j.toString() + " " + "0" + " " + "60");*/
     }
 
+    // insert reservation information to lecture information list sort by time line
     for (int i = 0; i < RSS.length; i++) {
       if (RSS[i].date > renderSpecificSave.date) {
         RSS.insert(i, renderSpecificSave);

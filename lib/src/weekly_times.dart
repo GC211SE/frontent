@@ -7,7 +7,7 @@ class WeeklyTimes {
     "en": <String>['', 'SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'],
   };
 
-  // 오전 9시부터로 수정함
+  // from 9am to 12pm
   static final times = {
     "ko": <String>[
       '',

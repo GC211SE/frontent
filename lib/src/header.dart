@@ -1,4 +1,4 @@
-/* 상단 요일 바 of timetable */
+/* top day indicator of timetable */
 import 'package:flutter/material.dart';
 
 class Header extends StatelessWidget {
