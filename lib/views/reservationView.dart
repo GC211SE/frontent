@@ -13,8 +13,8 @@ var thisContext;
 int count = 0;
 
 class Lecture {
-  final String date; // 요일
-  final String time; // 시간 -> 밑에 MAP 으로 시간 알아봅시다
+  final String date;
+  final String time;
 
   Lecture({
     this.date = "",
@@ -34,8 +34,7 @@ class Lecture {
   }
 
   timeCalculator(String time) {
-    // dotw data 받아와서 시간 형식을 저장(start hour/minute, end hour/minute)
-    // split nth 교시 to hour and minute
+    // divide time of String format to int
     int startHour = int.parse(convertToActualTime[time]![0].substring(0, 2));
     int startMinute = int.parse(convertToActualTime[time]![0].substring(3, 4));
     int endHour = int.parse(convertToActualTime[time]![1].substring(0, 2));
@@ -50,7 +49,6 @@ class Lecture {
 
     return hourSplit;
 
-    /// cell 에 받은거 만큼 다른색으로 칠해주는 함수 추가 요망
   }
 
   // format = name:[start time, end time]
@@ -296,51 +294,51 @@ class _ReservationViewState extends State<ReservationView> {
                                     int endM = endTime.minute;
 
                                     if (startDay != endDay) {
-                                      // 이틀 이상 예약 불가
+                                      // cannot make a reservation for more than two days
                                       _showDialog();
                                       return;
                                     }
 
                                     for (Lecture lec in lecture) {
                                       if (startDay.toString() == lec.date) {
-                                        // 선택한 요일에 강의가 있으면
+                                        // if lecture exists on the selected day
                                         List<int> hourSplit =
                                             lec.timeCalculator(lec.time);
 
                                         if (startH >= hourSplit[0] &&
                                             startH <= hourSplit[2]) {
-                                          // 시작 시간이 강의시간과 겹치면
+                                          // if the start time overlaps with the lecture
                                           if (startH == hourSplit[0] &&
                                               startM >= hourSplit[1]) {
-                                            // 예약 불가
+                                            // cannot make reservation
                                             _showDialog();
                                             return;
                                           } else if (startH == hourSplit[2] &&
                                               startM <= hourSplit[3]) {
-                                            // 예약 불가
+                                            // cannot make reservation
                                             _showDialog();
                                             return;
                                           }
                                         } else if (endH >= hourSplit[0] &&
                                             endH <= hourSplit[2]) {
-                                          // 끝나는 시간이 강의시간과 겹치면
+                                          // if the end time overlaps with the lecture
                                           if (endH == hourSplit[0] &&
                                               endM >= hourSplit[1]) {
-                                            // 예약 불가
+                                            // cannot make reservation
                                             _showDialog();
                                             return;
                                           } else if (endH == hourSplit[2] &&
                                               endM <= hourSplit[3]) {
-                                            // 예약 불가
+                                            // cannot make reservation
                                             _showDialog();
                                             return;
                                           }
                                         } else if (startH <=
                                                 hourSplit[
-                                                    0] && // 예약시간 안에 강의가 있으면
+                                                    0] && // if lecture is in reservation time
                                             endH >= hourSplit[2]) {
                                           if (startM <= hourSplit[1]) {
-                                            // 예약 불가
+                                            // cannot make reservation
                                             _showDialog();
                                             return;
                                           }
@@ -551,7 +549,7 @@ class _ReservationViewState extends State<ReservationView> {
   }
 
   void _showDialog() {
-    // 예약 불가
+    // cannot make reservation
     showDialog(
       context: context,
       builder: (BuildContext context) {
