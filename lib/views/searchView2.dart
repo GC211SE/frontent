@@ -66,6 +66,7 @@ class _SearchView2State extends State<SearchView2> {
   }
 
   Widget lists() {
+    //Load lecture rooms for selected building
     return FutureBuilder<List<String>>(
       future: getData(),
       builder: (_, snapshot) {
@@ -111,6 +112,7 @@ class _SearchView2State extends State<SearchView2> {
                       : Colors.amber,
                 ),
                 onPressed: () {
+                  //Starlist function
                   List<String> starlist = pref.starredClassroom;
                   int index = starlist
                       .indexOf("${GlobalVariables.recentBuilding}---$roomID");
@@ -129,6 +131,7 @@ class _SearchView2State extends State<SearchView2> {
                 width: 100,
                 alignment: Alignment.centerRight,
                 child: Text(
+                    //Count the number of reserved using current reservation API
                     '사용 중 - $using명${MediaQuery.of(context).size.width > GlobalVariables.mobileWidth ? "  |  " : "\n"}예약 중 - $reserved명'),
               ),
             ],
@@ -145,6 +148,7 @@ class _SearchView2State extends State<SearchView2> {
     );
   }
 
+  //Parse building information from Gachon university building API
   Future<List<String>> getData() async {
     http.Response res = await http.get(Uri.parse(
         "https://gcse.doky.space/api/schedule/classrooms?bd=${GlobalVariables.recentBuilding}"));
@@ -153,6 +157,7 @@ class _SearchView2State extends State<SearchView2> {
         .toList();
   }
 
+  //Parse room information for each building from Gachon university lecture room API
   Future<Map<String, dynamic>> getRoomData(String roomID) async {
     http.Response res2 = await http.get(Uri.parse(
         "https://gcse.doky.space/api/reservation/currtotal?bd=${GlobalVariables.recentBuilding}&crn=$roomID"));

@@ -111,7 +111,7 @@ class _LoginViewState extends State<LoginView> {
 
                               SizedBox(height: 50),
 
-                              // 아이디
+                              // ID
                               TextFormField(
                                 onChanged: (value) => userId = value,
                                 onFieldSubmitted: (_) =>
@@ -119,7 +119,7 @@ class _LoginViewState extends State<LoginView> {
                                 decoration: InputDecoration(labelText: 'ID'),
                               ),
 
-                              // 비밀번호
+                              // Password
                               TextFormField(
                                 onChanged: (value) => userPw = value,
                                 obscureText: true,
@@ -128,7 +128,7 @@ class _LoginViewState extends State<LoginView> {
                                 decoration:
                                     InputDecoration(labelText: 'Password'),
                               ),
-
+                              //Check if ID and Password is valid
                               Container(
                                 alignment: Alignment.bottomCenter,
                                 height: 30,
@@ -150,7 +150,7 @@ class _LoginViewState extends State<LoginView> {
                               else
                                 SizedBox(height: 100),
 
-                              // 로그인 버튼
+                              // Login Button
                               CupertinoButton(
                                 color: Colors.blue.shade900,
                                 child: Text(
@@ -250,7 +250,7 @@ class _LoginViewState extends State<LoginView> {
       await Future.delayed(Duration(milliseconds: 0));
       modalOpacity = isRunning;
       setState(() {});
-
+      //Parse login information from Gachon university login API
       http.Response res = await http.get(
         Uri.parse("https://gcse.doky.space/api/sign?id=$id&pw=$password"),
       );
@@ -258,7 +258,7 @@ class _LoginViewState extends State<LoginView> {
 
       if (resJ["success"] == true) {
         isLoginFailed = false;
-        // 성공 시, 정보를 받아옴
+        // If success, get user information.
         GlobalVariables.userName = resJ["name"].toString();
         GlobalVariables.userDept = resJ["dept"].toString();
         GlobalVariables.userImg = resJ["photo"].toString();

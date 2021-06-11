@@ -13,7 +13,7 @@ class SearchView extends StatefulWidget {
 
 class _SearchViewState extends State<SearchView> {
   List data = [];
-
+  //Parse building information from Gachon university building API
   Future<String> getData() async {
     http.Response res = await http
         .get(Uri.parse("https://gcse.doky.space/api/schedule/buildings"));
@@ -69,6 +69,7 @@ class _SearchViewState extends State<SearchView> {
     );
   }
 
+  //Show building lists using listview.
   Widget lists() {
     return ListView.builder(
       physics: BouncingScrollPhysics(),
