@@ -13,12 +13,14 @@ class PrefKey {
 }
 
 class PreferencesManager {
+  // Singleton Pattern
   PreferencesManager._();
   static PreferencesManager _instance = PreferencesManager._();
   static PreferencesManager get instance => _instance;
 
   late SharedPreferences _prefs;
 
+  // Shared Preferences Attributes
   String _userId = "";
   List<String> _userPassword = [];
   List<String> _starredClassroom = [];
@@ -27,7 +29,7 @@ class PreferencesManager {
   //
   //
   //
-  //
+  // Getter, Setter
   String get userId => _userId;
 
   String get userPassword {
@@ -64,6 +66,7 @@ class PreferencesManager {
   //
   //
   //
+  // Initializer
   Future<void> init() async {
     _prefs = await SharedPreferences.getInstance();
     print("========================");
@@ -78,8 +81,7 @@ class PreferencesManager {
   //
   //
   //
-  //
-  //
+  // Encrypt for saving user password
   List<String> encrypt({required String input}) {
     DES3 crypto = DES3(
       key: Cipher.key.codeUnits,

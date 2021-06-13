@@ -24,6 +24,7 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      // Routing code
       home: LoginView(),
       routes: {
         "/LoginView": (_) => LoginView(),
@@ -36,6 +37,7 @@ class _MyAppState extends State<MyApp> {
         "/Search2": (_) => SearchView2(),
         "/Previous": (_) => PreviousView(),
       },
+      // Set defalut font to nanum round
       theme: ThemeData(fontFamily: "Nanum"),
     );
   }

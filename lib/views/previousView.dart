@@ -211,6 +211,7 @@ class _PreviousViewState extends State<PreviousView> {
     );
   }
 
+  // Get total reservation data of user
   Future<void> getData() async {
     reservationWidgetDatas = [];
 
@@ -253,6 +254,7 @@ class _PreviousViewState extends State<PreviousView> {
   List<ReservationWidgetData> reservationWidgetDatas = [];
 }
 
+// Class for structing user Reservation data to visualization
 class ReservationWidgetData {
   final int idx;
   final String start;

@@ -48,7 +48,6 @@ class Lecture {
     hourSplit.add(endMinute);
 
     return hourSplit;
-
   }
 
   // format = name:[start time, end time]
@@ -424,6 +423,7 @@ class _ReservationViewState extends State<ReservationView> {
     );
   }
 
+  // Display Dialog
   showAlertDialog(BuildContext context) {
     // set up the AlertDialog
     AlertDialog alert = AlertDialog(
@@ -506,7 +506,7 @@ class _ReservationViewState extends State<ReservationView> {
       ],
     );
 
-    // show the dialog
+    // Show the dialog
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -515,6 +515,7 @@ class _ReservationViewState extends State<ReservationView> {
     );
   }
 
+  // Send reservation information to server
   Future<bool> doReservation({
     required String userid,
     required DateTime start,
@@ -548,6 +549,7 @@ class _ReservationViewState extends State<ReservationView> {
     return true;
   }
 
+  // Show dialog
   void _showDialog() {
     // cannot make reservation
     showDialog(

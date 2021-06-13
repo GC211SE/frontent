@@ -232,6 +232,7 @@ class _LoginViewState extends State<LoginView> {
   //
   //
   //
+  // Initialize all process
   Future<void> doInitialLogin() async {
     await pref.init();
     if (pref.userId.length != 0 && pref.userPassword.length != 0) {
@@ -242,6 +243,7 @@ class _LoginViewState extends State<LoginView> {
   //
   //
   //
+  // Communicate server to check login
   Future<void> doLogin({required String id, required String password}) async {
     if (!isRunning) {
       isRunning = true;

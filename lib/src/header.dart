@@ -6,7 +6,7 @@ class Header extends StatelessWidget {
 
   final List<String> dates;
 
-  // 상단 요일 바
+  // Date indicator for upper bar
   @override
   Widget build(BuildContext context) {
     return Column(

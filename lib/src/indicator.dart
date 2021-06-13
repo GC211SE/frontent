@@ -1,5 +1,5 @@
 /* left time indicator of timetable */
-// weekly_times.dart 에서 오전 9시부터로 수정함
+// Modified from 9AM: weekly_times.dart
 
 import 'package:flutter/material.dart';
 

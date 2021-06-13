@@ -29,6 +29,7 @@ class _CheckinViewState extends State<CheckinView> {
     );
   }
 
+  // Change each dialog views
   Widget controller({required int step}) {
     switch (step) {
       case 1:
@@ -46,6 +47,7 @@ class _CheckinViewState extends State<CheckinView> {
     }
   }
 
+  // Step 1: 지금 강의실을 사용할 수 있나요?
   Widget step1() {
     return Padding(
       padding: EdgeInsets.all(30),
@@ -131,6 +133,7 @@ class _CheckinViewState extends State<CheckinView> {
     );
   }
 
+  // Step 2: (Step 1 -> false) 저런.. 혹시 이유가 무엇인가요?
   Widget step2() {
     return Padding(
       padding: EdgeInsets.all(30),
@@ -254,6 +257,7 @@ class _CheckinViewState extends State<CheckinView> {
     );
   }
 
+  // Step 3: (Step 1 -> true) 강의실에 사람이 몇 명 있는지 알려주세요
   Widget step3() {
     return Padding(
       padding: EdgeInsets.all(30),
@@ -422,6 +426,7 @@ class _CheckinViewState extends State<CheckinView> {
     );
   }
 
+  // Step 4: Check in
   Widget step4() {
     return Padding(
       padding: EdgeInsets.all(30),
@@ -493,6 +498,7 @@ class _CheckinViewState extends State<CheckinView> {
     );
   }
 
+  // Step 5: (Step2 -> Step5) 다른 강의실을 찾아보도록 하죠
   Widget step5() {
     return Padding(
       padding: EdgeInsets.all(30),
@@ -546,6 +552,8 @@ class _CheckinViewState extends State<CheckinView> {
     );
   }
 
+  // Checking people and if real person number > server person number
+  //  : Add reservation of anonymous person
   Future<bool> checkPeopleAndAdd({required int number}) async {
     http.Response res = await http.get(
       Uri.parse(
@@ -571,6 +579,7 @@ class _CheckinViewState extends State<CheckinView> {
     return isOk;
   }
 
+  // Checkin code for communicate server
   Future<bool> doCheckin() async {
     http.Response res = await http.patch(
       Uri.parse("https://gcse.doky.space/api/reservation/checkin"),
@@ -584,6 +593,7 @@ class _CheckinViewState extends State<CheckinView> {
     return true;
   }
 
+  // Add reservation of anonymous person
   Future<bool> dummyReservation({required int minutes}) async {
     DateTime now = DateTime.now();
     now = now.toUtc();

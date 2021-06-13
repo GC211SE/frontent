@@ -91,7 +91,6 @@ class _HomeViewState extends State<HomeView> {
             )
           :
           // Mobile(App) UI
-          // Implement design code here
           Padding(
               padding: EdgeInsets.fromLTRB(15, 0, 15, 0),
               child: Column(
@@ -684,6 +683,7 @@ class _HomeViewState extends State<HomeView> {
   List<ReservationWidgetData> reservationWidgetDatas = [];
   List<ReservationWidgetData> starredWidgetDatas = [];
 
+  // Get Reservation data of user
   Future<void> getData() async {
     reservationWidgetDatas = [];
     starredWidgetDatas = [];
@@ -785,6 +785,7 @@ class _HomeViewState extends State<HomeView> {
 
 }
 
+// Class for structing user Reservation data to visualization
 class ReservationWidgetData {
   final int idx;
   final DateTime startTime;

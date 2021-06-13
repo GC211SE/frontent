@@ -59,6 +59,7 @@ class _SettingViewState extends State<SettingView> {
     );
   }
 
+  // Setting items
   Widget items() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -145,6 +146,7 @@ class _SettingViewState extends State<SettingView> {
     );
   }
 
+  // Do Logout and reset all saved data
   void logout() {
     var pref = PreferencesManager.instance;
     pref.userId = "";
@@ -157,6 +159,7 @@ class _SettingViewState extends State<SettingView> {
     );
   }
 
+  // Erase all starred data from local device
   void initializeStarred() {
     var pref = PreferencesManager.instance;
 

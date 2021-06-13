@@ -207,6 +207,7 @@ class _StatusViewState extends State<StatusView> {
     );
   }
 
+  // Get current resertation data
   Future<void> getData() async {
     http.Response res = await http.get(Uri.parse(
         "https://gcse.doky.space/api/reservation/current?userid=${pref.userId}"));
@@ -239,6 +240,7 @@ class _StatusViewState extends State<StatusView> {
     timer();
   }
 
+  // Timer UI controller
   Future<void> timer() async {
     bool isTimerEnd = false;
     while (!isTimerEnd) {
@@ -286,6 +288,7 @@ class _StatusViewState extends State<StatusView> {
     }
   }
 
+  // Format time data
   String timeFormatter({
     required int hour,
     required int minute,
